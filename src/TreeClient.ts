@@ -40,15 +40,13 @@ export default class TreeClient {
     }
 
     public createQuery(query: Query, session: Session) {
-        /*
+        
         // TODO: Pass fetcher to query
         if (session === null){
-            return this.createSession();
-        } else {
-            let new_session = new Session(nodes);
-            new_session.nodes = session.nodes;
+            session = this.createSession();
         }
-        */
+        
+        
     }
 
 }

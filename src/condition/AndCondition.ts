@@ -1,6 +1,6 @@
 import Condition from './Condition';
 
-class AndCondition implements Condition{
+export default class AndCondition implements Condition{
     left: Condition;
     right: Condition;
     constructor(left:Condition, right:Condition){

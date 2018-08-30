@@ -1,19 +1,26 @@
 import SingleQuery from './SingleQuery';
 import Condition from '../condition/Condition';
+import StringContainsCondition from '../condition/StringContainsCondition';
 import Session from '../Session';
+import Node from '../tree/Node';
+import ChildRelation from '../tree/ChildRelation';
+import OrCondition from '../condition/OrCondition';
+import StringContainedCondition from '../condition/StringContainedCondition';
 
-class SearchStringQuery extends SingleQuery{
-    savecondition: Condition;
+export default class SearchStringQuery extends SingleQuery{
     followcondition: Condition;
-    removecondition: Condition;
 
     constructor(session:Session,
-         savecondition: Condition,
-         followcondition: Condition,
-         removecondition: Condition,
-         searchstring: string){
-        super(session, savecondition, followcondition, removecondition);
+        searchstring: string)
+        {
+        super(session, new OrCondition(new StringContainsCondition(), new StringContainedCondition()));
         super.set_iteration_value(searchstring);
-    }
+        super.set_iteration_action(function(node: Node, relation: ChildRelation, child: Node, iterationValue){
+            if (child.getValue().length < searchstring.length){ 
+                return iterationValue.slice(child.getValue().length) 
+                }
+                return "";
+            })
+        }
 }
 

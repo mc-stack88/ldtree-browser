@@ -4,17 +4,16 @@ import Session from '../Session';
 import Node from '../tree/Node';
 
 export default abstract class SingleQuery extends Query{
-    saveCondition: Condition;
+    // saveCondition: Condition;
     followCondition: Condition;
     removeconditions: Condition;
     iterationValue;
     iterationAction;
 
-    constructor(session:Session, saveCondition: Condition, followCondition: Condition, removeconditions: Condition){
+    constructor(session:Session, /*saveCondition: Condition,*/ followCondition: Condition){
         super(session);
-        this.saveCondition = saveCondition;
+        // this.saveCondition = saveCondition;
         this.followCondition = followCondition;
-        this.removeconditions = removeconditions;
     }
 
     // THIS IS AN OPTIONAL VALUE THAT CAN BE SET FOR EVERY QUERY CALL
@@ -28,34 +27,38 @@ export default abstract class SingleQuery extends Query{
     
     
     query(){
-        let nodelist = this.queryRecursive(this.session, this.iterationValue);
+        let nodelist = this.queryRecursive(this.session.nodes, this.iterationValue);
         //TODO:: put the nodes in the nodelist on top of the starting nodes they originate from and return like this as new state for the session.
-        return new Session(this.session.nodes);
+        return new Session(nodelist);
     }
 
-    private queryRecursive(session:Session, iterationValue):Node[]{
-        session = session.follow(this.followCondition);
-        if (session.is_empty()){
-            return ;
-        }
+    private queryRecursive(nodes:Array<Node>, iterationValue):Node[]{
+
+        let followed_children = [];
+
+        for (var node of nodes){
+            for (var relation of node.getChildRelations()){
+                for (var child of relation.getChildren()){
+                    if (this.followCondition.check_condition(node, relation, child, iterationValue)){
+                        followed_children.push([node, relation, child])
+                    }
+                }
+            }
+        }   
+
         let saved_nodes = new Array<Node>();
-        let t = this;
-        session.save(this.saveCondition).forEach(element => {
-            t.emit('data', element)
-        });;
-        session.remove(this.followCondition);
 
-        // IF PASSED EXECUTE A GIVEN ACTION ON THE OPTIONAL ITERATION VALUE FIELD BEFORE IT IS USED IN THE NEXT ITERATION
-        // THIS CAN BE USED TO INCREMENT / COPY THE OBJECT / EXECUTE A CALLBACK...
-        if (this.iterationAction != null && this.iterationValue != null){
-            this.iterationAction(this.iterationValue);
+        for (var noderelationchildarray of followed_children){
+            let newIterationValue = iterationValue
+            if (this.iterationAction != null && iterationValue != null){
+                newIterationValue = this.iterationAction(node, relation, child, iterationValue);
+            }
+            let finished_nodes = this.queryRecursive([noderelationchildarray[2]], newIterationValue);
+            saved_nodes = saved_nodes.concat(finished_nodes);
         }
-
-        for (let node of session.nodes){
-            // This call returns an array of the found nodes (first node is the last node found on the way).
-            // The nodes are only returned if they have not been removed, so only the current state is logged with a backlog from the given state
-            let node_stack = this.queryRecursive(new Session([node]), iterationValue);
-            saved_nodes.concat();
+        if (saved_nodes.length == 0){
+            // IDEA:: HERE WE PUBLISH THE MEMBERS IN THIS NODE
+            return nodes;
         }
         return saved_nodes.concat()
 
