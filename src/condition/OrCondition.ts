@@ -1,6 +1,6 @@
 import Condition from './Condition';
 
-class AndCondition implements Condition{
+export default class OrCondition implements Condition{
     left: Condition;
     right: Condition;
     constructor(left:Condition, right:Condition){
@@ -8,7 +8,7 @@ class AndCondition implements Condition{
         this.right = right;
     }
     check_condition(node, relation, child, iterationValue){
-        return this.left.check_condition(node, relation, child, iterationValue) &&
+        return this.left.check_condition(node, relation, child, iterationValue) ||
          this.right.check_condition(node, relation, child, iterationValue);
     }
 }
