@@ -1,15 +1,31 @@
 import ldfetch = require('ldfetch');
 import TreeFetcher from "../src/fetch/TreeFetcher";
 import TreeParser from "../src/fetch/TreeParser";
+import TreeClient from "../src/TreeClient";
+import Collection from "../src/tree/Collection";
+import Node from '../src/tree/Node';
 
 main();
 async function main() {
 
+    /*
+    let parser = new TreeParser;
+
+    let treeClient = new TreeClient();
+    await treeClient.addCollection('https://amoryhoste.com/bikes/stations.jsonld');
+    let collection = treeClient.collections[Object.keys(treeClient.collections)[0]];
+    console.log(collection);
+    let views = await collection.getViews();
+    let node: Node = views[0];
+    let nodes = await node.getChildRelations()[0].getChildren();
+    console.log(nodes);
+    */
 
     /*
-    let fetcher = new TreeFetcher();
+    let fetcher = TreeFetcher.getInstance();
     let startTime = new Date();
     let member = await fetcher.getMember('https://amoryhoste.com/bikes/data/d0.jsonld#3697');
+    console.log(member);
     let endTime = new Date();
     console.error((endTime.getTime() - startTime.getTime()) + 'ms');
 
@@ -42,7 +58,7 @@ async function main() {
     */
 
 
-
+    /*
     try {
         let url = 'https://amoryhoste.com/bikes/data/d0.jsonld#3697';
         let fetch = new ldfetch({}); //options: allow to add more headers if needed
@@ -62,6 +78,7 @@ async function main() {
     } catch (e) {
         console.error(e);
     }
+    */
 
 
 

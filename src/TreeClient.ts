@@ -11,24 +11,31 @@ import TreeFetcher from "./fetch/TreeFetcher";
 export default class TreeClient {
 
     private collections: { [key:string]:Collection; };
-    private fetcher: TreeFetcher;
 
     public constructor () {
         this.collections = {};
-        this.fetcher = new TreeFetcher();
     }
 
-    public addCollection(url: string): void {
+    public async addCollection(url: string): Promise<void> {
         // Request and parse
-        this.collections[url] = new Collection(["gbfs:Station"], 10, [], ["http://example.com/root"]);
+        let collection = await TreeFetcher.getInstance().getCollection(url);
+        this.collections[url] = collection;
     }
 
     public deleteCollection(url: string): void {
         delete this.collections[url];
     }
 
-    private createSession(): Session {
-        let nodes = [].concat.apply([], Object.keys(this.collections).map(key=> this.collections[key]).map(col => col.getViews()));
+    private async createSession(): Promise<Session> {
+        let nodes = [];
+        let keys = Object.keys(this.collections);
+
+        for (let i = 0; i < keys.length; i++) {
+            let collectionNodes = await this.collections[keys[i]].getViews();
+            nodes = nodes.concat(collectionNodes);
+
+        }
+
         return new Session(nodes);
     }
 

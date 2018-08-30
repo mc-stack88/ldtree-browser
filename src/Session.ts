@@ -1,11 +1,8 @@
 import Node from "./tree/Node";
-import Condition from './condition/Condition';
 
 export default class Session {
-    
-    nodes: Array<Node>
-    children: Array<Node>;
 
+    nodes: Array<Node>;
     public constructor(nodes: Array<Node>) {
         this.nodes = nodes;
     }
