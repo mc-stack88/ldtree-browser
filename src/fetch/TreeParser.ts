@@ -23,8 +23,6 @@ export default class TreeParser {
         options["aliases"]["https://w3id.org/tree#hasChildRelation"] = "hasChildRelation";
 
         options["aliases"]["http://www.w3.org/ns/hydra/core#member"] = "member";
-        // TEMP TODO: remove
-        options["aliases"]["hydra:member"] = "member";
 
         options["aliases"]["https://w3id.org/tree#child"] = "child";
         return options;
