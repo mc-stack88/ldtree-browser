@@ -7,6 +7,7 @@ import StringSearchQuery from '../query/SearchStringQuery'
 
 main();
 function main() {
+    console.log("STARTING TEST")
     let rootnode = create_data();
     let session = new Session([rootnode]);
 

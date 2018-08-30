@@ -13,10 +13,9 @@ export default class SearchStringQuery extends SingleQuery{
     constructor(session:Session,
         searchstring: string)
         {
-        let followcondition = new StringContainsCondition()//new OrCondition(new StringContainsCondition(), new StringContainedCondition());
-        super(session, followcondition);
+        super(session, new OrCondition(new StringContainsCondition(), new StringContainedCondition()));
         super.set_iteration_value(searchstring);
-        super.set_iteration_action(function(node: Node, relation: ChildRelation, child: Node, iterationValue){  
+        super.set_iteration_action(function(node: Node, relation: ChildRelation, child: Node, iterationValue){
             if (child.getValue().length < searchstring.length){ 
                 return iterationValue.slice(child.getValue().length) 
                 }
