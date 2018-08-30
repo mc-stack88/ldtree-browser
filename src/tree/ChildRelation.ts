@@ -1,4 +1,5 @@
 import RelationType from "./RelationType";
+import TreeFetcher from "../fetch/TreeFetcher";
 
 export default class ChildRelation {
 
@@ -10,8 +11,15 @@ export default class ChildRelation {
         this.relationTypes = relationTypes;
     }
 
-    public getChildren(): Array<string> {
-        return this.children;
+    public async getChildren(): Promise<Array<Node>> {
+        let fetcher = TreeFetcher.getInstance();
+        let result = [];
+        for (let i = 0; i < this.children.length; i++) {
+            let node = await fetcher.getNode(this.children[i]);
+            result.push(node);
+        }
+
+        return result;
     }
 
     public getRelationType(): Array<RelationType> {

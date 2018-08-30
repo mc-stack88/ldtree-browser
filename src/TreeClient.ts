@@ -11,11 +11,9 @@ import TreeFetcher from "./fetch/TreeFetcher";
 export default class TreeClient {
 
     private collections: { [key:string]:Collection; };
-    private fetcher: TreeFetcher;
 
     public constructor () {
         this.collections = {};
-        this.fetcher = new TreeFetcher();
     }
 
     public addCollection(url: string): void {
@@ -27,8 +25,16 @@ export default class TreeClient {
         delete this.collections[url];
     }
 
-    private createSession(): Session {
-        let nodes = [].concat.apply([], Object.keys(this.collections).map(key=> this.collections[key]).map(col => col.getViews()));
+    private async createSession(): Promise<Session> {
+        let fetcher = TreeFetcher.getInstance();
+        let node_ids = [].concat.apply([], Object.keys(this.collections).map(key=> this.collections[key]).map(col => col.getViews()));
+        let nodes = [];
+
+        for (let i = 0; i < node_ids.length; i++) {
+            let node = await fetcher.getNode(node_ids[i]);
+            nodes.push(node);
+        }
+
         return new Session(nodes);
     }
 

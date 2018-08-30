@@ -1,4 +1,5 @@
 import ChildRelation from "./ChildRelation";
+import TreeFetcher from "../fetch/TreeFetcher";
 
 export default class Node {
 
@@ -22,9 +23,12 @@ export default class Node {
         return this.childRelations;
     }
 
-    public getMembers(): Array<string> {
-        return this.members;
-    }
+    public getMembers(): Array<object> {
+        let fetcher = TreeFetcher.getInstance();
+        return this.members.map((id) => {
+            return fetcher.getMember(id);
+        });
+    }w
 
     public getTotalItems(): number {
         return this.totalItems;

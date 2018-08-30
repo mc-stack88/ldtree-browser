@@ -1,15 +1,19 @@
 import ldfetch = require('ldfetch');
 import TreeFetcher from "../src/fetch/TreeFetcher";
 import TreeParser from "../src/fetch/TreeParser";
+import TreeClient from "../src/TreeClient";
 
 main();
 async function main() {
 
+    let client = new TreeClient();
+
 
     /*
-    let fetcher = new TreeFetcher();
+    let fetcher = TreeFetcher.getInstance();
     let startTime = new Date();
     let member = await fetcher.getMember('https://amoryhoste.com/bikes/data/d0.jsonld#3697');
+    console.log(member);
     let endTime = new Date();
     console.error((endTime.getTime() - startTime.getTime()) + 'ms');
 
@@ -42,7 +46,7 @@ async function main() {
     */
 
 
-
+    /*
     try {
         let url = 'https://amoryhoste.com/bikes/data/d0.jsonld#3697';
         let fetch = new ldfetch({}); //options: allow to add more headers if needed
@@ -62,6 +66,7 @@ async function main() {
     } catch (e) {
         console.error(e);
     }
+    */
 
 
 

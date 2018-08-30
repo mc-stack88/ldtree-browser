@@ -7,10 +7,12 @@ import ldfetch = require('ldfetch');
  */
 export default class TreeFetcher {
 
+    private static instance: TreeFetcher;
+
     private nodeCache: NodeCache;
     private fetch;
 
-    public constructor () {
+    private constructor () {
         // Create node cache
         this.nodeCache = new NodeCache(10000);
         this.fetch = new ldfetch({});
@@ -22,8 +24,15 @@ export default class TreeFetcher {
 
     public async getMember(id: string): Promise<object> {
         let response = await this.fetch.get(id);
-        let framed = await this.fetch.frame(response.triples, { '@id': 'id' });
+        let framed = await this.fetch.frame(response.triples, { '@id': id });
         return framed["@graph"][0];
+    }
+
+    public static getInstance() {
+        if (!TreeFetcher.instance) {
+            TreeFetcher.instance = new TreeFetcher();
+        }
+        return TreeFetcher.instance;
     }
 
 }

@@ -3,7 +3,7 @@ import Condition from './condition/Condition';
 
 export default class Session {
     
-    nodes: Array<Node>
+    nodes: Array<Node>;
     public constructor(nodes: Array<Node>) {
         this.nodes = nodes;
     }
