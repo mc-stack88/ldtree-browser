@@ -21,7 +21,7 @@ async function main() {
     console.log(nodes);
     */
 
-    /*
+
     let fetcher = TreeFetcher.getInstance();
     let startTime = new Date();
     let member = await fetcher.getMember('https://amoryhoste.com/bikes/data/d0.jsonld#3697');
@@ -38,7 +38,7 @@ async function main() {
     member = await fetcher.getMember('https://amoryhoste.com/bikes/data/d0.jsonld#3697');
     endTime = new Date();
     console.error((endTime.getTime() - startTime.getTime()) + 'ms');
-    */
+
 
     /*
     let fetcher = new TreeFetcher();
