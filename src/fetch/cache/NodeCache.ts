@@ -10,7 +10,7 @@ export default class NodeCache {
     public constructor (maxNodes: number) {
         this.cache = new LRU<string, Node>({
             max: maxNodes,
-            maxAge: 1000 * 60 * 60,
+            maxAge: 1000 * 60,
             stale: true,
             noDisposeOnSet: true,
         });
@@ -40,7 +40,7 @@ export default class NodeCache {
         if (obj["hasChildRelation"] !== undefined) {
             childRelations = obj["hasChildRelation"].map((obj) => {
                 return new ChildRelation(obj["child"], obj["type"]);
-            })
+            });
         }
 
         let members = obj["member"] !== undefined ? obj["member"] : [];
