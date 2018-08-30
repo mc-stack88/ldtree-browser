@@ -1,21 +1,21 @@
-import ldfetch = require('ldfetch');
+import tree_parser = require('ldtree-parser');
 
 
 main();
 async function main() {
     try {
-        let url = 'https://datapiloten.be/bikes/data/d10.jsonld';
-        let fetch = new ldfetch({}); //options: allow to add more headers if needed
-        let response = await fetch.get(url);
-        for (let i = 0; i < response.triples.length; i ++) {
-            let triple = response.triples[i];
-            if (triple.subject.value === response.url && triple.predicate.value === 'http://www.w3.org/ns/hydra/core#next') {
-                console.error('The next page is: ', triple.object.value);
+        let url = "https://datapiloten.be/patriciastreets/fragment1.jsonld";
+        let response = await tree_parser.parse_tree(url); //options: allow to add more headers if needed
+        
+        console.log(response)
+
+        for (var key in Object.keys(response)){
+            console.log(response[key])
+            if (response[key]["https://w3id.org/tree#hasChildRelation"]){
+                console.log(response[key]["https://w3id.org/tree#hasChildRelation"])
             }
+
         }
-        fetch.frame(response.triples, { }).then(object => {
-            console.error(object);
-        });
     } catch (e) {
         console.error(e);
     }
