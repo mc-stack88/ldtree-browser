@@ -1,3 +1,6 @@
+import TreeFetcher from "../fetch/TreeFetcher";
+import Node from "./Node";
+
 export default class Collection {
 
     private readonly manages: Array<string>;
@@ -24,8 +27,15 @@ export default class Collection {
         return this.members;
     }
 
-    public getViews(): Array<string> {
-        return this.views;
+    public async getViews(): Promise<Array<Node>> {
+        let fetcher = TreeFetcher.getInstance();
+        let nodes = [];
+
+        for (let i = 0; i < this.views.length; i++) {
+            let node = await fetcher.getNode(this.views[i]);
+            nodes.push(node);
+        }
+        return nodes;
     }
 
 }

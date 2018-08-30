@@ -25,6 +25,10 @@ export default class TreeParser {
         options["aliases"]["http://www.w3.org/ns/hydra/core#member"] = "member";
 
         options["aliases"]["https://w3id.org/tree#child"] = "child";
+
+        options["aliases"]["http://www.w3.org/ns/hydra/core#manages"] = "manages";
+
+        options["aliases"]["http://www.w3.org/ns/hydra/core#view"] = "view";
         return options;
     }
 }

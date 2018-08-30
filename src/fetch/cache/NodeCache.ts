@@ -43,8 +43,8 @@ export default class NodeCache {
             });
         }
 
-        let members = obj["member"] !== undefined ? obj["member"] : [];
-        let totalItems = obj["totalItems"] !== undefined ? obj["totalItems"] : NaN;
+        let members = obj.hasOwnProperty("member") ? obj["member"] : [];
+        let totalItems = obj.hasOwnProperty("totalItems") ? Number(obj["totalItems"]) : NaN;
 
         return new Node(value, childRelations, members, totalItems);
     }

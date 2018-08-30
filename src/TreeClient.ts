@@ -16,9 +16,10 @@ export default class TreeClient {
         this.collections = {};
     }
 
-    public addCollection(url: string): void {
+    public async addCollection(url: string): Promise<void> {
         // Request and parse
-        this.collections[url] = new Collection(["gbfs:Station"], 10, [], ["http://example.com/root"]);
+        let collection = await TreeFetcher.getInstance().getCollection(url);
+        this.collections[url] = collection;
     }
 
     public deleteCollection(url: string): void {
@@ -26,13 +27,13 @@ export default class TreeClient {
     }
 
     private async createSession(): Promise<Session> {
-        let fetcher = TreeFetcher.getInstance();
-        let node_ids = [].concat.apply([], Object.keys(this.collections).map(key=> this.collections[key]).map(col => col.getViews()));
         let nodes = [];
+        let keys = Object.keys(this.collections);
 
-        for (let i = 0; i < node_ids.length; i++) {
-            let node = await fetcher.getNode(node_ids[i]);
-            nodes.push(node);
+        for (let i = 0; i < keys.length; i++) {
+            let collectionNodes = await this.collections[keys[i]].getViews();
+            nodes = nodes.concat(collectionNodes);
+
         }
 
         return new Session(nodes);

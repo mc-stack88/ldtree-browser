@@ -28,7 +28,7 @@ export default class Node {
         return this.members.map((id) => {
             return fetcher.getMember(id);
         });
-    }w
+    }
 
     public getTotalItems(): number {
         return this.totalItems;
