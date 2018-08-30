@@ -22,6 +22,7 @@
     "@types/lru-cache": "^4.1.1",
     "@types/n3": "^1.0.0",
     "jsonld": "^1.0.4",
+    "events": "^3.0.0",
     "ldfetch": "^1.0.9-alpha",
     "ldtree-parser": "^1.0.0",
     "lru-cache": "^4.1.3",
