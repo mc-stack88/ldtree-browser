@@ -1,4 +1,4 @@
 
 export default interface Condition {
-    check_condition(node, relation, child, iterationValue): boolean;
+    check_condition(...args: any[]): boolean;
 }

@@ -2,16 +2,18 @@ import Condition from "../condition/Condition";
 import Query from './Query';
 import Session from '../Session';
 import Node from '../tree/Node';
+import SaveCondition from '../condition/SaveCondition';
+import FollowCondition from '../condition/FollowCondition';
 
 export default abstract class SingleQuery extends Query{
-    // saveCondition: Condition;
+    saveCondition: Condition;
     followCondition: Condition;
     iterationValue;
     iterationAction;
 
-    constructor(/*saveCondition: Condition,*/ followCondition: Condition ){
+    constructor(saveCondition: SaveCondition, followCondition: FollowCondition ){
         super();
-        // this.saveCondition = saveCondition;
+        this.saveCondition = saveCondition;
         this.followCondition = followCondition;
     }
 
@@ -34,8 +36,15 @@ export default abstract class SingleQuery extends Query{
     private async queryRecursive(nodes:Array<Node>, iterationValue):Promise<Node[]>{
 
         let followed_children = [];
+        let saved_nodes = new Array<Node>();
 
         for (var node of nodes){
+            if (node.getChildRelations().length == 0){
+                if (this.saveCondition.check_condition(node, iterationValue)){
+                    saved_nodes.push(node)
+                    this.emit("member", await Promise.all(node.getMembers()))
+                }
+            }
             for (var relation of node.getChildRelations()){
                 for (var child of await relation.getChildren()){
                     if (this.followCondition.check_condition(node, relation, child, iterationValue)){
@@ -45,7 +54,6 @@ export default abstract class SingleQuery extends Query{
             }
         }   
 
-        let saved_nodes = new Array<Node>();
 
         for (var noderelationchildarray of followed_children){
             let newIterationValue = iterationValue
