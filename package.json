@@ -24,7 +24,7 @@
     "jsonld": "^1.0.4",
     "events": "^3.0.0",
     "ldfetch": "^1.0.9-alpha",
-    "ldtree-parser": "^1.0.0",
+    "ldtree-parser": "^1.0.2",
     "lru-cache": "^4.1.3",
     "n3": "^1.0.0-beta.2"
   }

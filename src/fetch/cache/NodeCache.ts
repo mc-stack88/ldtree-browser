@@ -28,23 +28,24 @@ export default class NodeCache {
     private async addToCache(url: string): Promise<void> {
         let parser = new TreeParser;
         let data = await parser.parse(url);
+        data = data.nodes;
         Object.keys(data).forEach((key) => {
             this.cache.set(key, this.parseNode(data[key]));
         })
     }
 
     private parseNode(obj: object): Node {
-        let value = obj["value"];
+        let value = obj["https://w3id.org/tree#value"];
 
         let childRelations = [];
-        if (obj["hasChildRelation"] !== undefined) {
-            childRelations = obj["hasChildRelation"].map((obj) => {
-                return new ChildRelation(obj["child"], obj["type"]);
+        if (obj["https://w3id.org/tree#hasChildRelation"] !== undefined) {
+            childRelations = obj["https://w3id.org/tree#hasChildRelation"].map((obj) => {
+                return new ChildRelation(obj["https://w3id.org/tree#child"], obj["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"]);
             });
         }
 
-        let members = obj.hasOwnProperty("member") ? obj["member"] : [];
-        let totalItems = obj.hasOwnProperty("totalItems") ? Number(obj["totalItems"]) : NaN;
+        let members = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#member") ? obj["http://www.w3.org/ns/hydra/core#member"] : [];
+        let totalItems = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#totalItems") ? Number(obj["http://www.w3.org/ns/hydra/core#totalItems"]) : NaN;
 
         return new Node(value, childRelations, members, totalItems);
     }

@@ -20,24 +20,11 @@ async function main() {
     let nodes = await node.getChildRelations()[0].getChildren();
     console.log(nodes);
     */
+    let collection = await TreeFetcher.getInstance().getCollection('https://amoryhoste.com/bikes/stations.jsonld');
+    let views = await collection.getViews();
+    let children = await views[0].getChildRelations()[0].getChildren();
+    console.log(children);
 
-
-    let fetcher = TreeFetcher.getInstance();
-    let startTime = new Date();
-    let member = await fetcher.getMember('https://amoryhoste.com/bikes/data/d0.jsonld#3697');
-    console.log(member);
-    let endTime = new Date();
-    console.error((endTime.getTime() - startTime.getTime()) + 'ms');
-
-    startTime = new Date();
-    member = await fetcher.getMember('https://amoryhoste.com/bikes/data/d0.jsonld#3697');
-    endTime = new Date();
-    console.error((endTime.getTime() - startTime.getTime()) + 'ms');
-
-    startTime = new Date();
-    member = await fetcher.getMember('https://amoryhoste.com/bikes/data/d0.jsonld#3697');
-    endTime = new Date();
-    console.error((endTime.getTime() - startTime.getTime()) + 'ms');
 
 
     /*
