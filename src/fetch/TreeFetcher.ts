@@ -33,16 +33,17 @@ export default class TreeFetcher {
     public async getCollection(id: string): Promise<Collection> {
         let parser = new TreeParser;
         let data = await parser.parse(id);
+        data = data.collections;
 
         let keys = Object.keys(data);
         for (let i = 0; i < keys.length; i++) {
             let key = keys[i];
             let obj = data[key];
-            if (key === id && obj.hasOwnProperty("type") && obj.type.includes("http://www.w3.org/ns/hydra/core#Collection")) {
-                let manages = obj.hasOwnProperty("manages") ? obj["manages"] : [];
-                let members = obj.hasOwnProperty("member") ? obj["member"] : [];
-                let totalItems = obj.hasOwnProperty("totalItems") ? Number(obj["totalItems"]) : NaN;
-                let view = obj.hasOwnProperty("view") ? obj["view"] : [];
+            if (key === id && obj.hasOwnProperty("http://www.w3.org/1999/02/22-rdf-syntax-ns#type") && obj["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"].includes("http://www.w3.org/ns/hydra/core#Collection")) {
+                let manages = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#manages") ? obj["http://www.w3.org/ns/hydra/core#manages"] : [];
+                let members = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#member") ? obj["http://www.w3.org/ns/hydra/core#member"] : [];
+                let totalItems = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#totalItems") ? Number(obj["http://www.w3.org/ns/hydra/core#totalItems"]) : NaN;
+                let view = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#view") ? obj["http://www.w3.org/ns/hydra/core#view"] : [];
 
                 return new Collection(manages, totalItems, members, view);
             }
