@@ -18,6 +18,7 @@ async function main() {
     // let query = new LocationQuery("POLYGON ((54.827194631440356 -157.864418, 54.827194631440356 76.98793, -23.611846 76.98793, -23.611846 -157.864418))")
     query.on('member', async function(member){
         console.log("member: ")
+        console.log(member)
     })
     let session = await treeclient.executeQuery(query)
     console.log(session)

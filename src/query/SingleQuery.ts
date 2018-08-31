@@ -33,16 +33,25 @@ export default abstract class SingleQuery extends Query{
         return new Session(nodelist);
     }
 
+    private async emitMember(node){
+        let members = await Promise.all(node.getMembers())
+        for (var member of members){
+            if (Object.keys(member).length !== 0){
+                this.emit("member", member)
+            }
+        }
+    }
+
     private async queryRecursive(nodes:Array<Node>, iterationValue):Promise<Node[]>{
 
         let followed_children = [];
         let saved_nodes = new Array<Node>();
 
         for (var node of nodes){
-            if (node.getChildRelations().length == 0){
-                if (this.saveCondition.check_condition(node, iterationValue)){
+            if (this.saveCondition.check_condition(node, iterationValue)){
+                this.emitMember(node);
+                if (node.getChildRelations().length == 0){
                     saved_nodes.push(node)
-                    this.emit("member", await Promise.all(node.getMembers()))
                 }
             }
             for (var relation of node.getChildRelations()){
@@ -71,3 +80,4 @@ export default abstract class SingleQuery extends Query{
 
     }
 }
+
