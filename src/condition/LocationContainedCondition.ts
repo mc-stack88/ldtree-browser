@@ -18,10 +18,6 @@ export default class LocationContainedCondition implements Condition {
 
     check_condition(node:Node, relation:ChildRelation, child:Node, iterationValue) {
         if (relation.getRelationType().indexOf(RelationType.GeospatiallyContainsRelation) != -1){
-
-            console.log(node)
-            console.log(relation)
-            console.log(child)
             let childpoly = terraformerparser.parse(child.getValue());
             return (this.nodeprimitivepoly.contains(childpoly) || this.nodeprimitivepoly.intersects(childpoly))
         } 

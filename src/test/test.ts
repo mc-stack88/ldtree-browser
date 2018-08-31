@@ -14,7 +14,7 @@ main();
 async function main() {
     let treeclient = new TreeClient();
     await treeclient.addCollection("https://amoryhoste.com/bikes/stations.jsonld");
-    let query = new LocationQuery("POLYGON ((52 8, 52 10, 50 10, 50 8 ))")
+    let query = new LocationQuery("POLYGON ((52 8, 52 10, 50 10, 50 8 , 52 8))")
     // let query = new LocationQuery("POLYGON ((54.827194631440356 -157.864418, 54.827194631440356 76.98793, -23.611846 76.98793, -23.611846 -157.864418))")
     let session = await treeclient.executeQuery(query)
 
