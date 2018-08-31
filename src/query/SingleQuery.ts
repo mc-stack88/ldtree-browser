@@ -6,12 +6,11 @@ import Node from '../tree/Node';
 export default abstract class SingleQuery extends Query{
     // saveCondition: Condition;
     followCondition: Condition;
-    removeconditions: Condition;
     iterationValue;
     iterationAction;
 
-    constructor(session:Session, /*saveCondition: Condition,*/ followCondition: Condition){
-        super(session);
+    constructor(/*saveCondition: Condition,*/ followCondition: Condition ){
+        super();
         // this.saveCondition = saveCondition;
         this.followCondition = followCondition;
     }
@@ -26,19 +25,19 @@ export default abstract class SingleQuery extends Query{
     }
     
     
-    query(){
-        let nodelist = this.queryRecursive(this.session.nodes, this.iterationValue);
+    async query(){
+        let nodelist = await this.queryRecursive(this.session.nodes, this.iterationValue);
         //TODO:: put the nodes in the nodelist on top of the starting nodes they originate from and return like this as new state for the session.
         return new Session(nodelist);
     }
 
-    private queryRecursive(nodes:Array<Node>, iterationValue):Node[]{
+    private async queryRecursive(nodes:Array<Node>, iterationValue):Promise<Node[]>{
 
         let followed_children = [];
 
         for (var node of nodes){
             for (var relation of node.getChildRelations()){
-                for (var child of relation.getChildren()){
+                for (var child of await relation.getChildren()){
                     if (this.followCondition.check_condition(node, relation, child, iterationValue)){
                         followed_children.push([node, relation, child])
                     }
@@ -53,7 +52,7 @@ export default abstract class SingleQuery extends Query{
             if (this.iterationAction != null && iterationValue != null){
                 newIterationValue = this.iterationAction(node, relation, child, iterationValue);
             }
-            let finished_nodes = this.queryRecursive([noderelationchildarray[2]], newIterationValue);
+            let finished_nodes = await this.queryRecursive([noderelationchildarray[2]], newIterationValue);
             saved_nodes = saved_nodes.concat(finished_nodes);
         }
         if (saved_nodes.length == 0){

@@ -7,11 +7,10 @@ export default abstract class Query extends EventEmitter{
 
     session: Session;
 
-    public constructor(session:Session){
-        super();
+    set_session(session: Session){
         this.session = session;
     }
 
-    abstract query(): Session;
+    abstract async query(): Promise<Session>;
 
 }

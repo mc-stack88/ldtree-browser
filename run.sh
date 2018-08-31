@@ -1,2 +1,2 @@
-tsc --lib es2015 src/index.ts;
-node src/index.js;
+tsc --lib es2015 src/test/test.ts;
+node src/test/test.js;

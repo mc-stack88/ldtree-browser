@@ -4,38 +4,19 @@ import tree_parser = require('ldtree-parser');
 import RelationType from '../tree/RelationType';
 import Session from '../Session';
 import StringSearchQuery from '../query/SearchStringQuery'
+import TreeFetcher from '../fetch/TreeFetcher';
+import TreeClient from '../TreeClient';
+import * as terraformer from 'terraformer'
+import * as terraformerparser from 'terraformer-wkt-parser'
+import LocationQuery from "../query/LocationQuery";
 
 main();
-function main() {
-    console.log("STARTING TEST")
-    let rootnode = create_data();
-    let session = new Session([rootnode]);
+async function main() {
+    let treeclient = new TreeClient();
+    await treeclient.addCollection("https://amoryhoste.com/bikes/stations.jsonld");
+    let query = new LocationQuery("POLYGON ((52 8, 52 10, 50 10, 50 8 ))")
+    // let query = new LocationQuery("POLYGON ((54.827194631440356 -157.864418, 54.827194631440356 76.98793, -23.611846 76.98793, -23.611846 -157.864418))")
+    let session = await treeclient.executeQuery(query)
 
-    let query = new StringSearchQuery(session, "Gentbrug")
-
-    console.log(query.query())
+    console.log(session)
 }
-
-
-
-function create_data(): Node {
-    // G e nt brugge
-    // G e nt straat
-
-    let node_brugge = new Node("brugge", null, null, 0);
-    let children_ntbrugge = new ChildRelation([node_brugge], [RelationType.StringCompletesRelation])
-    let node_straat = new Node("straat", null, null, 0);
-    let children_ntstraat = new ChildRelation([node_straat], [RelationType.StringCompletesRelation])
-
-    let node_nt = new Node("nt", [children_ntstraat, children_ntbrugge], null, 0);
-    let children_e = new ChildRelation([node_nt], [RelationType.StringCompletesRelation])
-    let node_e = new Node("e", [children_e], null, 0);
-    let children_G = new ChildRelation([node_e], [RelationType.StringCompletesRelation])
-    let node_G = new Node("G", [children_G], null, 0);
-    let children_ = new ChildRelation([node_G], [RelationType.StringCompletesRelation])
-    let node_ = new Node("", [children_], null, 0);
-
-    return node_;
-
-}
-

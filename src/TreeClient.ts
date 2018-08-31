@@ -1,4 +1,4 @@
-import Session from "./Session";
+import Session from './Session';
 import Collection from "./tree/Collection";
 import Query from "./query/Query";
 import TreeFetcher from "./fetch/TreeFetcher";
@@ -39,12 +39,18 @@ export default class TreeClient {
         return new Session(nodes);
     }
 
-    public createQuery(query: Query, session: Session) {
+    public async executeQuery(query: Query, session: Session = null) {
+
         
         // TODO: Pass fetcher to query
         if (session === null){
-            session = this.createSession();
+            session = await this.createSession();
         }
+
+        query.set_session(session);
+        console.log("querying with", session)
+
+        return await query.query();
         
         
     }
