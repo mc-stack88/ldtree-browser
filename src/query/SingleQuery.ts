@@ -40,6 +40,9 @@ export default abstract class SingleQuery extends Query{
                 this.emit("member", member)
             }
         }
+    }  
+    private async emitNode(node){
+        this.emit("node", node)
     }
 
     private async queryRecursive(nodes:Array<Node>, iterationValue):Promise<Node[]>{
@@ -50,8 +53,10 @@ export default abstract class SingleQuery extends Query{
         for (var node of nodes){
             if (this.saveCondition.check_condition(node, iterationValue)){
                 this.emitMember(node);
+                this.emitNode(node);
                 if (node.getChildRelations().length == 0){
                     saved_nodes.push(node)
+                    this.emit("leafnode", node)
                 }
             }
             for (var relation of node.getChildRelations()){
