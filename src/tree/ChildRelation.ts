@@ -8,6 +8,10 @@ export default class ChildRelation {
     private readonly relationTypes: Array<RelationType>;
 
     public constructor(children: Array<string>, relationTypes: Array<RelationType>) {
+        if (children.length < 1 || relationTypes.length < 1) {
+            throw "Invalid childrelation";
+        }
+
         this.children = children;
         this.relationTypes = relationTypes;
     }

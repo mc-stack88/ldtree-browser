@@ -9,6 +9,10 @@ export default class Collection {
     private readonly views: Array<string>;
 
     public constructor(manages: Array<string>, totalItems: number, members: Array<any>, views: Array<string>) {
+        if (views.length < 1) {
+            throw "Invalid collection";
+        }
+
         this.manages = manages;
         this.totalItems = totalItems;
         this.members = members;
