@@ -12,8 +12,10 @@ export default class TreeClient {
 
     private collections: { [key:string]:Collection; };
 
-    public constructor () {
+    public constructor (maxSubjects?: number, maxAge?: number) {
         this.collections = {};
+        // Set cache size of tree fetcher
+        TreeFetcher.getInstance(maxSubjects, maxAge);
     }
 
     public async addCollection(url: string): Promise<void> {
@@ -48,7 +50,7 @@ export default class TreeClient {
         }
 
         query.set_session(session);
-        console.log("querying with", session)
+        console.log("querying with", session);
 
         return await query.query();
         

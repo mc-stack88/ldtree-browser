@@ -1,20 +1,6 @@
-import TreeFetcher from "../src/fetch/TreeFetcher";
 
 main();
 async function main() {
-
-    /*
-    let parser = new TreeParser;
-
-    let treeClient = new TreeClient();
-    await treeClient.addCollection('https://amoryhoste.com/bikes/stations.jsonld');
-    let collection = treeClient.collections[Object.keys(treeClient.collections)[0]];
-    console.log(collection);
-    let views = await collection.getViews();
-    let node: Node = views[0];
-    let nodes = await node.getChildRelations()[0].getChildren();
-    console.log(nodes);
-    */
 
     /*
     let fetcher = TreeFetcher.getInstance();
@@ -34,6 +20,7 @@ async function main() {
     endTime = new Date();
     console.error((endTime.getTime() - startTime.getTime()) + 'ms');
     */
+    /*
     let collection = await TreeFetcher.getInstance().getCollection('https://amoryhoste.com/bikes/stations.jsonld');
     let views = await collection.getViews();
 
@@ -50,7 +37,7 @@ async function main() {
     child = children[0];
     console.log(child);
 
-
+    */
     /*
     childRelation = await child[0].getChildRelations();
     child = await childRelation[0].getChildren()[0];

@@ -10,6 +10,7 @@ export default class TreeCache {
     private tripleCache: LRU.Cache<string, Array<object>>;
     private parser: TripleParser;
     private fetcher: TripleFetcher;
+    private runningPromises;
 
     public constructor(maxSubjects?: number, maxAge?: number) {
         if (maxSubjects === undefined) {
@@ -29,13 +30,17 @@ export default class TreeCache {
             stale: true,
             noDisposeOnSet: true,
         });
+
+        this.runningPromises = [];
     }
 
     public async getNode(id: string): Promise<Node> {
+        await Promise.all(this.runningPromises);
         let found = this.tripleCache.peek(id);
 
         if (!found){
             let triples = await this.fetchTriples(id);
+            this.runningPromises.push(triples);
             return this.parser.parseNode(triples);
         } else {
             let triples = this.tripleCache.get(id);
@@ -43,16 +48,19 @@ export default class TreeCache {
                 return this.parser.parseNode(triples);
             } catch (err) {
                 let triples = await this.fetchTriples(id);
+                this.runningPromises.push(triples);
                 return this.parser.parseNode(triples);
             }
         }
     }
 
     public async getMember(id: string): Promise<Array<object>> {
+        await Promise.all(this.runningPromises);
         let found = this.tripleCache.peek(id);
 
         if (!found){
             let triples = await this.fetchTriples(id);
+            this.runningPromises.push(triples);
             return this.parser.parseMember(triples);
         } else {
             let triples = this.tripleCache.get(id);
@@ -60,16 +68,19 @@ export default class TreeCache {
                 return this.parser.parseMember(triples);
             } catch (err) {
                 let triples = await this.fetchTriples(id);
+                this.runningPromises.push(triples);
                 return this.parser.parseMember(triples);
             }
         }
     }
 
     public async getChildRelation(id: string): Promise<ChildRelation> {
+        await Promise.all(this.runningPromises);
         let found = this.tripleCache.peek(id);
 
         if (!found){
             let triples = await this.fetchTriples(id);
+            this.runningPromises.push(triples);
             return this.parser.parseChildRelation(triples);
         } else {
             let triples = this.tripleCache.get(id);
@@ -77,16 +88,19 @@ export default class TreeCache {
                 return this.parser.parseChildRelation(triples);
             } catch (err) {
                 let triples = await this.fetchTriples(id);
+                this.runningPromises.push(triples);
                 return this.parser.parseChildRelation(triples);
             }
         }
     }
 
     public async getCollection(id: string): Promise<Collection> {
+        await Promise.all(this.runningPromises);
         let found = this.tripleCache.peek(id);
 
         if (!found){
             let triples = await this.fetchTriples(id);
+            this.runningPromises.push(triples);
             return this.parser.parseCollection(triples);
         } else {
             let triples = this.tripleCache.get(id);
@@ -94,6 +108,7 @@ export default class TreeCache {
                 return this.parser.parseCollection(triples);
             } catch (err) {
                 let triples = await this.fetchTriples(id);
+                this.runningPromises.push(triples);
                 return this.parser.parseCollection(triples);
             }
         }

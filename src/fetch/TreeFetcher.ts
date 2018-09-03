@@ -14,7 +14,7 @@ export default class TreeFetcher {
     private treeCache: TreeCache;
     private fetch;
 
-    private constructor () {
+    private constructor (maxSubjects?: number, maxAge?: number) {
         // Create node cache
         this.treeCache = new TreeCache(10000, 1000 * 60);
         this.fetch = new ldfetch({});
@@ -36,9 +36,9 @@ export default class TreeFetcher {
         return this.treeCache.getChildRelation(id);
     }
 
-    public static getInstance() {
+    public static getInstance(maxSubjects?: number, maxAge?: number) {
         if (!TreeFetcher.instance) {
-            TreeFetcher.instance = new TreeFetcher();
+            TreeFetcher.instance = new TreeFetcher(maxSubjects, maxAge);
         }
         return TreeFetcher.instance;
     }
