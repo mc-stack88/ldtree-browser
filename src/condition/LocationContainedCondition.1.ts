@@ -7,8 +7,9 @@ import * as terraformerparser from 'terraformer-wkt-parser'
 import {Primitive} from "terraformer";
 import {GeoJsonObject} from "geojson";
 import FollowCondition from './FollowCondition';
+import SaveCondition from './SaveCondition';
 
-export default class LocationContainedCondition implements FollowCondition {
+export default class LocationContainedSaveCondition implements SaveCondition {
 
     nodeprimitivepoly: Primitive<GeoJsonObject>;
 
@@ -17,11 +18,8 @@ export default class LocationContainedCondition implements FollowCondition {
         this.nodeprimitivepoly = new terraformer.Primitive(nodepoly)
     }
 
-    check_condition(node:Node, relation:ChildRelation, child:Node, iterationValue) {
-        if (relation.getRelationType().indexOf(RelationType.GeospatiallyContainsRelation) != -1){
-            let childpoly = terraformerparser.parse(child.getValue());
-            return (this.nodeprimitivepoly.contains(childpoly) || this.nodeprimitivepoly.intersects(childpoly))
-        } 
-        return false; 
+    check_condition(node:Node, iterationValue) {
+        let nodePoly = terraformerparser.parse(node.getValue());
+        return (this.nodeprimitivepoly.contains(nodePoly) || this.nodeprimitivepoly.intersects(nodePoly))
     }
 }

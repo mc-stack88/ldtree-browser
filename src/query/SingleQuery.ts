@@ -2,16 +2,18 @@ import Condition from "../condition/Condition";
 import Query from './Query';
 import Session from '../Session';
 import Node from '../tree/Node';
+import SaveCondition from '../condition/SaveCondition';
+import FollowCondition from '../condition/FollowCondition';
 
 export default abstract class SingleQuery extends Query{
-    // saveCondition: Condition;
+    saveCondition: Condition;
     followCondition: Condition;
     iterationValue;
     iterationAction;
 
-    constructor(/*saveCondition: Condition,*/ followCondition: Condition ){
+    constructor(saveCondition: SaveCondition, followCondition: FollowCondition ){
         super();
-        // this.saveCondition = saveCondition;
+        this.saveCondition = saveCondition;
         this.followCondition = followCondition;
     }
 
@@ -31,11 +33,32 @@ export default abstract class SingleQuery extends Query{
         return new Session(nodelist);
     }
 
+    private async emitMember(node){
+        let members = await Promise.all(node.getMembers())
+        for (var member of members){
+            if (Object.keys(member).length !== 0){
+                this.emit("member", member)
+            }
+        }
+    }  
+    private async emitNode(node){
+        this.emit("node", node)
+    }
+
     private async queryRecursive(nodes:Array<Node>, iterationValue):Promise<Node[]>{
 
         let followed_children = [];
+        let saved_nodes = new Array<Node>();
 
         for (var node of nodes){
+            if (this.saveCondition.check_condition(node, iterationValue)){
+                this.emitMember(node);
+                this.emitNode(node);
+                if (node.getChildRelations().length == 0){
+                    saved_nodes.push(node)
+                    this.emit("leafnode", node)
+                }
+            }
             for (var relation of node.getChildRelations()){
                 for (var child of await relation.getChildren()){
                     if (this.followCondition.check_condition(node, relation, child, iterationValue)){
@@ -45,7 +68,6 @@ export default abstract class SingleQuery extends Query{
             }
         }   
 
-        let saved_nodes = new Array<Node>();
 
         for (var noderelationchildarray of followed_children){
             let newIterationValue = iterationValue
@@ -63,3 +85,4 @@ export default abstract class SingleQuery extends Query{
 
     }
 }
+

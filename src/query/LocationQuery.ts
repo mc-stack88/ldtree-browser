@@ -7,13 +7,14 @@ import OrCondition from '../condition/OrCondition';
 import StringContainedCondition from '../condition/StringContainedCondition';
 import StringContainsCondition from '../condition/StringContainsCondition';
 import LocationContainedCondition from "../condition/LocationContainedCondition";
+import LocationContainedSaveCondition from '../condition/LocationContainedCondition.1';
 
 export default class LocationQuery extends SingleQuery{
     followcondition: Condition;
 
     constructor(locationString: string)
         {
-            super(new LocationContainedCondition(locationString));
+            super(new LocationContainedSaveCondition(locationString), new LocationContainedCondition(locationString));
         }
 }
 
