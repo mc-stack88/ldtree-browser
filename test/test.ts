@@ -1,9 +1,4 @@
-import ldfetch = require('ldfetch');
 import TreeFetcher from "../src/fetch/TreeFetcher";
-import TreeParser from "../src/fetch/TreeParser";
-import TreeClient from "../src/TreeClient";
-import Collection from "../src/tree/Collection";
-import Node from '../src/tree/Node';
 
 main();
 async function main() {
@@ -41,8 +36,26 @@ async function main() {
     */
     let collection = await TreeFetcher.getInstance().getCollection('https://amoryhoste.com/bikes/stations.jsonld');
     let views = await collection.getViews();
-    let children = await views[0].getChildRelations()[0].getChildren();
-    console.log(children);
+
+    let childRelation = await views[0].getChildRelations();
+    let children = await childRelation[0].getChildren();
+    let child = children[0];
+
+    childRelation = await child.getChildRelations();
+    children = await childRelation[0].getChildren();
+    child = children[0];
+
+    childRelation = await child.getChildRelations();
+    children = await childRelation[0].getChildren();
+    child = children[0];
+    console.log(await child.getMembers());
+
+
+    /*
+    childRelation = await child[0].getChildRelations();
+    child = await childRelation[0].getChildren()[0];
+    console.log(child);
+    */
 
 
 

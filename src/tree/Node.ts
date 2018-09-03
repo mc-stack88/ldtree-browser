@@ -4,11 +4,11 @@ import TreeFetcher from "../fetch/TreeFetcher";
 export default class Node {
 
     private readonly value: any;
-    private readonly childRelations: Array<ChildRelation>;
+    private readonly childRelations: Array<string>;
     private readonly members: Array<string>;
     private readonly totalItems: number;
 
-    public constructor(value: any, childRelations: Array<ChildRelation>, members: Array<string>, totalItems: number) {
+    public constructor(value: any, childRelations: Array<string>, members: Array<string>, totalItems: number) {
         if (value === undefined) {
             throw "Invalid node";
         }
@@ -23,15 +23,26 @@ export default class Node {
         return this.value;
     }
 
-    public getChildRelations(): Array<ChildRelation> {
-        return this.childRelations;
+    public async getChildRelations(): Promise<Array<ChildRelation>> {
+        let fetcher = TreeFetcher.getInstance();
+        let result = [];
+        for (let i = 0; i < this.childRelations.length; i++) {
+            let node = await fetcher.getChildRelation(this.childRelations[i]);
+            result.push(node);
+        }
+
+        return result;
     }
 
-    public getMembers(): Array<object> {
+    public async getMembers(): Promise<Array<Array<object>>> {
         let fetcher = TreeFetcher.getInstance();
-        return this.members.map((id) => {
-            return fetcher.getMember(id);
-        });
+        let result = [];
+        for (let i = 0; i < this.members.length; i++) {
+            let node = await fetcher.getMember(this.members[i]);
+            result.push(node);
+        }
+
+        return result;
     }
 
     public getTotalItems(): number {
