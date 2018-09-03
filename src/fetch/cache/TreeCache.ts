@@ -39,17 +39,17 @@ export default class TreeCache {
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = await this.fetchTriples(id);
+            let triples = this.fetchTriples(id);
             this.runningPromises.push(triples);
-            return this.parser.parseNode(triples);
+            return this.parser.parseNode(await triples);
         } else {
             let triples = this.tripleCache.get(id);
             try {
                 return this.parser.parseNode(triples);
             } catch (err) {
-                let triples = await this.fetchTriples(id);
+                let triples = this.fetchTriples(id);
                 this.runningPromises.push(triples);
-                return this.parser.parseNode(triples);
+                return this.parser.parseNode(await triples);
             }
         }
     }
@@ -59,17 +59,17 @@ export default class TreeCache {
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = await this.fetchTriples(id);
+            let triples = this.fetchTriples(id);
             this.runningPromises.push(triples);
-            return this.parser.parseMember(triples);
+            return this.parser.parseMember(await triples);
         } else {
             let triples = this.tripleCache.get(id);
             try {
                 return this.parser.parseMember(triples);
             } catch (err) {
-                let triples = await this.fetchTriples(id);
+                let triples = this.fetchTriples(id);
                 this.runningPromises.push(triples);
-                return this.parser.parseMember(triples);
+                return this.parser.parseMember(await triples);
             }
         }
     }
@@ -79,17 +79,17 @@ export default class TreeCache {
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = await this.fetchTriples(id);
+            let triples = this.fetchTriples(id);
             this.runningPromises.push(triples);
-            return this.parser.parseChildRelation(triples);
+            return this.parser.parseChildRelation(await triples);
         } else {
             let triples = this.tripleCache.get(id);
             try {
                 return this.parser.parseChildRelation(triples);
             } catch (err) {
-                let triples = await this.fetchTriples(id);
+                let triples = this.fetchTriples(id);
                 this.runningPromises.push(triples);
-                return this.parser.parseChildRelation(triples);
+                return this.parser.parseChildRelation(await triples);
             }
         }
     }

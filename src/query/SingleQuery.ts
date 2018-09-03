@@ -34,7 +34,7 @@ export default abstract class SingleQuery extends Query{
     }
 
     private async emitMember(node){
-        let members = await Promise.all(node.getMembers())
+        let members = await node.getMembers();
         for (var member of members){
             if (Object.keys(member).length !== 0){
                 this.emit("member", member)
