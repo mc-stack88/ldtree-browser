@@ -29,9 +29,12 @@ export default class TreeClient {
     private async createSession(): Promise<Session> {
         let nodes = [];
         let keys = Object.keys(this.collections);
+        console.log(this.collections)
 
         for (let i = 0; i < keys.length; i++) {
             let collectionNodes = await this.collections[keys[i]].getViews();
+            console.log("collectionNodes")
+            console.log(collectionNodes)
             nodes = nodes.concat(collectionNodes);
 
         }
@@ -50,7 +53,7 @@ export default class TreeClient {
         query.set_session(session);
         console.log("querying with", session)
 
-        return await query.query();
+        return query.query();
         
         
     }
