@@ -34,8 +34,6 @@ export default abstract class SingleQuery extends Query{
     }
 
     private async emitMember(node){
-        console.log("emitmember")
-        console.log(node)
         let members = await node.getMembers();
         for (var member of members){
             if (Object.keys(member).length !== 0){
@@ -52,7 +50,7 @@ export default abstract class SingleQuery extends Query{
         let followed_children = [];
         let saved_nodes = new Array<Node>();
 
-        for (var node of nodes){""
+        for (var node of nodes){
             if (this.saveCondition.check_condition(node, iterationValue)){
                 this.emitMember(node);
                 this.emitNode(node);
