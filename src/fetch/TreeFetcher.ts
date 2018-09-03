@@ -16,7 +16,7 @@ export default class TreeFetcher {
 
     private constructor (maxSubjects?: number, maxAge?: number) {
         // Create node cache
-        this.treeCache = new TreeCache(10000, 1000 * 60);
+        this.treeCache = new TreeCache(maxSubjects, maxAge;
         this.fetch = new ldfetch({});
     }
 

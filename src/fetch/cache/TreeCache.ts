@@ -14,7 +14,7 @@ export default class TreeCache {
 
     public constructor(maxSubjects?: number, maxAge?: number) {
         if (maxSubjects === undefined) {
-            maxSubjects = 10000;
+            maxSubjects = 5000;
         }
 
         if (maxAge === undefined) {
