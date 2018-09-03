@@ -9,6 +9,10 @@ export default class Node {
     private readonly totalItems: number;
 
     public constructor(value: any, childRelations: Array<ChildRelation>, members: Array<string>, totalItems: number) {
+        if (value === undefined) {
+            throw "Invalid node";
+        }
+
         this.value = value;
         this.childRelations = childRelations;
         this.members = members;

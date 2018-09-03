@@ -1,22 +1,24 @@
-import Node from '../tree/Node';
-import ChildRelation from '../tree/ChildRelation';
-import tree_parser = require('ldtree-parser');
-import RelationType from '../tree/RelationType';
-import Session from '../Session';
-import StringSearchQuery from '../query/SearchStringQuery'
-import TreeFetcher from '../fetch/TreeFetcher';
-import TreeClient from '../TreeClient';
-import * as terraformer from 'terraformer'
-import * as terraformerparser from 'terraformer-wkt-parser'
-import LocationQuery from "../query/LocationQuery";
+import TripleFetcher from "../fetch/helpers/TripleFetcher";
+import TripleParser from "../fetch/helpers/TripleParser";
+import ItemType from "../fetch/helpers/ItemType";
 
 main();
 async function main() {
+    /*
     let treeclient = new TreeClient();
     await treeclient.addCollection("https://amoryhoste.com/bikes/stations.jsonld");
     let query = new LocationQuery("POLYGON ((52 8, 52 10, 50 10, 50 8 , 52 8))")
     // let query = new LocationQuery("POLYGON ((54.827194631440356 -157.864418, 54.827194631440356 76.98793, -23.611846 76.98793, -23.611846 -157.864418))")
-    let session = await treeclient.executeQuery(query)
+    let session = await treeclient.executeQuery(query);
 
     console.log(session)
+    */
+
+    let fetcher = new TripleFetcher();
+    let result = await fetcher.getTriplesBySubject("https://amoryhoste.com/bikes/tree/t0.jsonld");
+    let key = Object.keys(result)[0];
+
+    let parser = new TripleParser();
+    console.log(parser.parseChildRelation(result[key]));
+    //console.log(JSON.stringify(result[key], null, 2));
 }

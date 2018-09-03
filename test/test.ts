@@ -20,7 +20,6 @@ async function main() {
     let nodes = await node.getChildRelations()[0].getChildren();
     console.log(nodes);
     */
-<<<<<<< HEAD
 
     /*
     let fetcher = TreeFetcher.getInstance();
@@ -40,14 +39,12 @@ async function main() {
     endTime = new Date();
     console.error((endTime.getTime() - startTime.getTime()) + 'ms');
     */
-=======
     let collection = await TreeFetcher.getInstance().getCollection('https://amoryhoste.com/bikes/stations.jsonld');
     let views = await collection.getViews();
     let children = await views[0].getChildRelations()[0].getChildren();
     console.log(children);
 
 
->>>>>>> b2500fbf70cea8ba17b04e9d6805acc3bb24e244
 
     /*
     let fetcher = new TreeFetcher();
