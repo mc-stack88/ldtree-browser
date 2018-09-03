@@ -38,11 +38,11 @@ export default class TripleFetcher {
 
     private expandBlankNodes(triple, url: string) {
         if (triple.subject.value.slice(0,2) === "_:") {
-            triple.subject.value = `${url}${triple.subject.value.substring(1)}`;
+            triple.subject.value = `${url}#${triple.subject.value.substring(1)}`;
         }
 
         if (triple.object.value.slice(0,2) === "_:") {
-            triple.object.value = `${url}${triple.object.value.substring(1)}`;
+            triple.object.value = `${url}#${triple.object.value.substring(1)}`;
         }
     }
 
