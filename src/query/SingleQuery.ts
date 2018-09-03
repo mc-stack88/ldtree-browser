@@ -54,12 +54,14 @@ export default abstract class SingleQuery extends Query{
             if (this.saveCondition.check_condition(node, iterationValue)){
                 this.emitMember(node);
                 this.emitNode(node);
-                if (node.getChildRelations().length == 0){
+                let childRelations = await node.getChildRelations();
+                if (childRelations.length == 0){
                     saved_nodes.push(node)
                     this.emit("leafnode", node)
                 }
             }
-            for (var relation of node.getChildRelations()){
+            let childRelations = await node.getChildRelations();
+            for (var relation of childRelations){
                 for (var child of await relation.getChildren()){
                     if (this.followCondition.check_condition(node, relation, child, iterationValue)){
                         followed_children.push([node, relation, child])

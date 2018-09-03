@@ -48,7 +48,7 @@ async function main() {
     childRelation = await child.getChildRelations();
     children = await childRelation[0].getChildren();
     child = children[0];
-    console.log(await child.getMembers());
+    console.log(child);
 
 
     /*
