@@ -7,8 +7,8 @@ export default class AndCondition implements Condition{
         this.left = left;
         this.right = right;
     }
-    check_condition(node, relation, child, iterationValue){
-        return this.left.check_condition(node, relation, child, iterationValue) &&
-         this.right.check_condition(node, relation, child, iterationValue);
+    check_condition(node, relation, child, nodeContext){
+        return this.left.check_condition(node, relation, child, nodeContext) &&
+         this.right.check_condition(node, relation, child, nodeContext);
     }
 }

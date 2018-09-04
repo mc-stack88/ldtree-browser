@@ -18,7 +18,7 @@ export default class LocationContainedCondition implements FollowCondition {
         this.nodeprimitivepoly = new terraformer.Primitive(this.nodepoly)
     }
 
-    check_condition(node:Node, relation:ChildRelation, child:Node, iterationValue) {
+    check_condition(node:Node, relation:ChildRelation, child:Node, nodeContext) {
         if (relation.getRelationType().indexOf(RelationType.GeospatiallyContainsRelation) != -1){
             let childpoly = terraformerparser.parse(child.getValue());
             let childprimitivepoly = new terraformer.Primitive(childpoly)

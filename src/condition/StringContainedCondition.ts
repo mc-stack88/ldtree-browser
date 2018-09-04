@@ -5,8 +5,8 @@ import FollowCondition from './FollowCondition';
 
 export default class StringContainedCondition implements FollowCondition {
     flag:string = "";
-    check_condition(node:Node, relation:ChildRelation, child:Node, iterationValue) {
-        if (child.getValue().startsWith(iterationValue)){
+    check_condition(node:Node, relation:ChildRelation, child:Node, nodeContext) {
+        if (child.getValue().startsWith(nodeContext)){
             return true;
         } 
         return false; 

@@ -5,8 +5,8 @@ import FollowCondition from './FollowCondition';
 import SaveCondition from './SaveCondition';
 
 export default class StringContainsSaveCondition implements SaveCondition {
-    check_condition(node:Node, iterationValue) {
-        if (iterationValue.startsWith(node.getValue())){
+    check_condition(node:Node, nodeContext) {
+        if (nodeContext.startsWith(node.getValue())){
             return true;
         } 
         return false; 

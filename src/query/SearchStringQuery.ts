@@ -9,7 +9,7 @@ import StringContainedCondition from '../condition/StringContainedCondition';
 import StringContainedSaveCondition from '../condition/StringContainedSaveCondition';
 import Query from './Query';
 
-export default class SearchStringQuery extends Query{
+export default class SearchStringQuery extends SingleQuery{
 
     query(): Promise<Session> {
         throw new Error("Method not implemented.");
@@ -21,11 +21,12 @@ export default class SearchStringQuery extends Query{
         {
             //TODO:: FIX THIS, NOT CORRECT, DONE TO STOP TYPING ERRORS
         super()
+        this.set
         this.followCondition = new OrCondition(new StringContainsCondition(), new StringContainedCondition());
-        // super.set_iteration_value(searchstring);
-        // super.set_iteration_action(function(node: Node, relation: ChildRelation, child: Node, iterationValue){
+        // super.setNodeContext(searchstring);
+        // super.setnodeContextUpdateActionAction(function(node: Node, relation: ChildRelation, child: Node, nodeContext){
         //     if (child.getValue().length < searchstring.length){ 
-        //         return iterationValue.slice(child.getValue().length) 
+        //         return nodeContext.slice(child.getValue().length) 
         //         }
         //         return "";
         //     })
