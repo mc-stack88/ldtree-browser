@@ -22,12 +22,12 @@ export default abstract class SingleQuery extends Query{
         this.nodeContext = nodeContext;
     }
     // THIS IS AN OPTIONAL VALUE THAT CAN BE EXECUTED EVERY QUERY CALL ON THE ITERATION VALUE
-    setnodeContextUpdateActionAction(action){
+    setNodeContextUpdateActionAction(action){
         this.nodeContextUpdateAction = action;
     }
 
     setStartingCondition(){
-        
+
     }
     
     async query(){
