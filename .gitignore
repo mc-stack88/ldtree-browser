@@ -83,3 +83,5 @@ out/
 
 *.js
 .package-lock
+
+lib/
