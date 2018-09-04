@@ -4,9 +4,9 @@ export default class Node {
     private readonly childRelations;
     private readonly members;
     private readonly totalItems;
-    constructor(value: any, childRelations: Array<ChildRelation>, members: Array<string>, totalItems: number);
+    constructor(value: any, childRelations: Array<string>, members: Array<string>, totalItems: number);
     getValue(): any;
-    getChildRelations(): Array<ChildRelation>;
-    getMembers(): Array<object>;
+    getChildRelations(): Promise<Array<ChildRelation>>;
+    getMembers(): Promise<Array<Array<object>>>;
     getTotalItems(): number;
 }
