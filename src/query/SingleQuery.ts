@@ -37,7 +37,6 @@ export default abstract class SingleQuery extends Query{
 
         this.session["leafnodes"] = []
         this.session["leafcontext"] = []
-
         this.session = await this.queryRecursive(this.session);
 
         //TODO:: put the nodes in the nodelist on top of the starting nodes they originate from and return like this as new state for the session.

@@ -20,8 +20,13 @@ export default class LocationContainedSaveCondition implements SaveCondition {
     }
 
     check_condition(node:Node, nodeContext) {
-        let childpoly = terraformerparser.parse(node.getValue());
-        let childprimitivepoly = new terraformer.Primitive(childpoly)
-        return (this.nodeprimitivepoly.contains(childpoly) || this.nodeprimitivepoly.intersects(childpoly) || childprimitivepoly.contains(this.nodepoly))
+        try{
+            let childpoly = terraformerparser.parse(node.getValue());
+            let childprimitivepoly = new terraformer.Primitive(childpoly)
+            return (this.nodeprimitivepoly.contains(childpoly) || this.nodeprimitivepoly.intersects(childpoly) || childprimitivepoly.contains(this.nodepoly))
+
+        } catch(err){
+            return false;
+        }
     }
 }

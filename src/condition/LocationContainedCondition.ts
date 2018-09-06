@@ -19,11 +19,15 @@ export default class LocationContainedCondition implements FollowCondition {
     }
 
     check_condition(node:Node, relation:ChildRelation, child:Node, nodeContext) {
-        if (relation.getRelationType().indexOf(RelationType.GeospatiallyContainsRelation) != -1){
-            let childpoly = terraformerparser.parse(child.getValue());
-            let childprimitivepoly = new terraformer.Primitive(childpoly)
-            return (this.nodeprimitivepoly.contains(childpoly) || this.nodeprimitivepoly.intersects(childpoly) || childprimitivepoly.contains(this.nodepoly))
-        } 
-        return false; 
+        try{
+           if (relation.getRelationType().indexOf(RelationType.GeospatiallyContainsRelation) != -1){
+                let childpoly = terraformerparser.parse(child.getValue());
+                let childprimitivepoly = new terraformer.Primitive(childpoly)
+                return (this.nodeprimitivepoly.contains(childpoly) || this.nodeprimitivepoly.intersects(childpoly) || childprimitivepoly.contains(this.nodepoly))
+            } 
+            return false; 
+        } catch(err){
+            return false;
+        }
     }
 }
