@@ -18,18 +18,14 @@ export default abstract class SingleQuery extends Query{
     }
 
     // THIS IS AN OPTIONAL VALUE THAT CAN BE SET FOR EVERY QUERY CALL
-    setNodeContext(nodeContext){
+    updateNodeContext(nodeContext){
         this.nodeContext = nodeContext;
     }
     // THIS IS AN OPTIONAL VALUE THAT CAN BE EXECUTED EVERY QUERY CALL ON THE ITERATION VALUE
-    setNodeContextUpdateActionAction(action){
+    updateNodeContextUpdateActionAction(action){
         this.nodeContextUpdateAction = action;
     }
 
-    setStartingCondition(){
-
-    }
-    
     async query(){
         if (this.session["context"] === undefined || this.session["context"] === null){
             if (this.nodeContext === undefined || this.nodeContext === null){
@@ -38,20 +34,23 @@ export default abstract class SingleQuery extends Query{
                 this.session["context"] = this.nodeContext
             }
         }
-        let result = await this.queryRecursive(this.session.nodes, this.session["context"]);
-        let nodelist = []
-        let context = []
-        for (var value of result){
-            nodelist.push(value[0])
-            context.push(value[1])
-        }
+
+        this.session["leafnodes"] = []
+        this.session["leafcontext"] = []
+
+        this.session = await this.queryRecursive(this.session);
+
         //TODO:: put the nodes in the nodelist on top of the starting nodes they originate from and return like this as new state for the session.
-        let session = new Session(nodelist);
-        session["context"] = context
-        return session;
+        
+        this.session.nodes = this.session["leafnodes"]
+        this.session.context = this.session["leafcontext"]
+        delete this.session["leafnodes"]
+        delete this.session["leafcontext"]
+
+        return this.session;
     }
 
-    private async emitMember(node){
+    async emitMember(node){
         let members = await node.getMembers();
         for (var member of members){
             if (Object.keys(member).length !== 0){
@@ -59,52 +58,54 @@ export default abstract class SingleQuery extends Query{
             }
         }
     }  
-    private async emitNode(node){
+    async emitNode(node){
         this.emit("node", node)
     }
 
     // This method returns an array of the form [ [node1, context1], [node2, context2], ... ]
-    private async queryRecursive(nodes:Array<Node>, nodeContext):Promise<any>{
+    async queryRecursive(session):Promise<any>{
 
-        let followed_children = [];
-        let saved_nodes = new Array<any>();
-
-        for (var i = 0; i < nodes.length; i++){
-            let node = nodes[i]
-            let currentContext = nodeContext[i];
+        let followedChildren = new Array<any>();
+        for (var i = 0; i < session.getLength(); i++){
+            let node = session.nodes[i]
+            let currentContext = session.context[i];
             if (this.saveCondition.check_condition(node, currentContext)){
                 this.emitMember(node);
                 this.emitNode(node);
                 let childRelations = await node.getChildRelations();
                 if (childRelations.length == 0){
-                    saved_nodes.push([node, currentContext])
+                    session["leafnodes"].push(node)
+                    session["leafcontext"].push(currentContext)
                     this.emit("leafnode", node)
                 }
             }
-            let childRelations = await node.getChildRelations();
-            for (var relation of childRelations){
+            for (var relation of await node.getChildRelations()){
                 for (var child of await relation.getChildren()){
                     if (this.followCondition.check_condition(node, relation, child, currentContext)){
-                        followed_children.push([node, relation, child, currentContext])
+                        followedChildren.push([node, relation, child, currentContext])
                     }
                 }
             }
         }   
 
 
-        for (var nrccarray of followed_children){
-            let newnodeContext = [nrccarray[3]]
+        for (var nrccarray of followedChildren){
             if (this.nodeContextUpdateAction != null && [nrccarray[3]] != null){
-                newnodeContext = this.nodeContextUpdateAction(nrccarray[0], nrccarray[1], nrccarray[2], nrccarray[3]);
+                nrccarray[3] = this.nodeContextUpdateAction(nrccarray[0], nrccarray[1], nrccarray[2], nrccarray[3]);
             }
-            let finished_nodes = await this.queryRecursive([nrccarray[2]], [newnodeContext]);
-            saved_nodes = saved_nodes.concat(finished_nodes);
         }
-        if (saved_nodes.length == 0){
-            // IDEA:: HERE WE PUBLISH THE MEMBERS IN THIS NODE
-            return [nodes, nodeContext];
+
+        if (followedChildren.length == 0){
+            return session;
         }
-        return saved_nodes
+
+        session.nodes = []
+        session.context = []
+        for (var nrccarray of followedChildren){
+            session.nodes.push(nrccarray[2])
+            session.context.push(nrccarray[3])
+        }
+        return await this.queryRecursive(session);
 
     }
 }

@@ -5,7 +5,7 @@ import FollowCondition from './FollowCondition';
 
 export default class StringContainsCondition implements FollowCondition {
     check_condition(node:Node, relation:ChildRelation, child:Node, nodeContext) {
-        if (nodeContext.startsWith(child.getValue())){
+        if (nodeContext["searchstring"] != "" && nodeContext["searchstring"].startsWith(child.getValue())){
             return true;
         } 
         return false; 
