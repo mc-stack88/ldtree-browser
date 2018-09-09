@@ -8,6 +8,8 @@ export default class Node {
     private readonly members: Array<string>;
     private readonly totalItems: number;
 
+    private readonly fullyloaded: boolean;
+
     public constructor(value: any, childRelations: Array<string>, members: Array<string>, totalItems: number) {
         if (value === undefined) {
             throw "Invalid node";

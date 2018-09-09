@@ -63,7 +63,8 @@ export default class TripleParser {
         let totalItems = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#totalItems") ? Number(obj["http://www.w3.org/ns/hydra/core#totalItems"]) : NaN;
 
         try {
-            return new Node(value, childRelations, members, totalItems);
+            let result = new Node(value, childRelations, members, totalItems);
+            return result
         } catch(err) {
             throw err;
         }
@@ -78,7 +79,8 @@ export default class TripleParser {
         let type = obj["http://www.w3.org/1999/02/22-rdf-syntax-ns#type"];
 
         try {
-            return new ChildRelation(children, type);
+            let result = new ChildRelation(children, type);
+            return result;
         } catch(err) {
             throw err;
         }
@@ -94,14 +96,16 @@ export default class TripleParser {
         let view = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#view") ? obj["http://www.w3.org/ns/hydra/core#view"] : [];
 
         try {
-            return new Collection(manages, totalItems, members, view);
+            let result = new Collection(manages, totalItems, members, view);
+            return result;
         } catch(err) {
             throw err;
         }
     }
 
     public parseMember(triples: Array<object>): Array<object> {
-        return triples;
+        let result = triples;
+        return result
     }
 
 }

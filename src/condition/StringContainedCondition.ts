@@ -4,7 +4,6 @@ import Node from '../tree/Node';
 import FollowCondition from './FollowCondition';
 
 export default class StringContainedCondition implements FollowCondition {
-    flag:string = "";
     check_condition(node:Node, relation:ChildRelation, child:Node, nodeContext) {
         if (nodeContext["searchstring"] != "" && child.getValue().startsWith(nodeContext["searchstring"])){
             return true;
