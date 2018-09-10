@@ -112,9 +112,9 @@ export default class TreeCache {
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = await this.fetchTriples(id);
+            let triples = this.fetchTriples(id);
             this.runningPromises.push(triples);
-            return this.parser.parseCollection(triples);
+            return this.parser.parseCollection(await triples);
         } else {
             let triples = this.tripleCache.get(id);
             try {
@@ -130,7 +130,11 @@ export default class TreeCache {
 
     public async fillNode(node: Node){
         await Promise.all(this.runningPromises);
-        let triples = await this.fetchTriples(node.getId());
+        // Check if state has changed after all runnning processes have finished
+        if (node.fullyloaded === true){ 
+            return node;
+        }
+        let triples = this.fetchTriples(node.getId());
         this.runningPromises.push(triples);
         let result = await this.parser.parseNode(await triples, node.getId());
         // set if a node is fully loaded

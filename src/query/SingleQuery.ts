@@ -49,17 +49,6 @@ export default abstract class SingleQuery extends Query{
         return this.session;
     }
 
-    async emitMember(node){
-        let members = await node.getMembers();
-        for (var member of members){
-            if (Object.keys(member).length !== 0){
-                this.emit("member", member)
-            }
-        }
-    }  
-    async emitNode(node){
-        this.emit("node", node)
-    }
 
     // This method returns an array of the form [ [node1, context1], [node2, context2], ... ]
     async queryRecursive(session):Promise<any>{
@@ -69,9 +58,9 @@ export default abstract class SingleQuery extends Query{
             let node = session.nodes[i]
             let currentContext = session.context[i];
             if (this.saveCondition.check_condition(node, currentContext)){
+                let childRelations = await node.getChildRelations();
                 this.emitMember(node);
                 this.emitNode(node);
-                let childRelations = await node.getChildRelations();
                 if (childRelations.length == 0){
                     session["leafnodes"].push(node)
                     session["leafcontext"].push(currentContext)

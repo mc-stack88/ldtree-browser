@@ -61,7 +61,7 @@ export default class Node {
         let fetcher = TreeFetcher.getInstance();
         let result = [];
 
-        if (this.childRelations.length === 0){
+        if (this.members.length === 0){
             if (this.fullyloaded === false){
                 await fetcher.fillNode(this);
                 return this.getMembers();
@@ -102,4 +102,7 @@ export default class Node {
         this.fullyloaded = node.fullyloaded 
     }
 
+    public isFullyLoaded(){
+        return this.fullyloaded;
+    }
 }
