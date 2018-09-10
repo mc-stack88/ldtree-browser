@@ -60,48 +60,38 @@ export default class SearchStringQuery extends Query{
 
     async queryRecursive(session: Session): Promise<Session>{
         
+        let followQueries = [];
         let followedChildren = new Array<any>();
         for (var i = 0; i < session.getLength(); i++){
             let node = session.nodes[i];
             let currentContext = session.context[i];
-            if (this.saveCondition.check_condition(node, currentContext)){
-                let childRelations = await node.getChildRelations();
-                this.emitMember(node);
-                this.emitNode(node);
-                session["leafnodes"].push(node);
-                session["leafcontext"].push(currentContext);
-                if (childRelations.length == 0){
-                    this.emit("leafnode", node);
-                }
-            }
-            for (var relation of await node.getChildRelations()){
-                for (var child of await relation.getChildren()){
-                    if (this.followCondition.check_condition(node, relation, child, currentContext)){
-                        followedChildren.push([node, relation, child, currentContext])
-                    }
-                }
-            }
+            let children = this.processNode(session, node, currentContext)
+            followQueries.push(children)
         }  
+
+        Promise.all(followQueries)
         session.nodes = []
         session.context = []
-        for (var nrccarray of followedChildren){
-            let node: Node =  nrccarray[0]
-            let childRelation =  nrccarray[1]
-            let child: Node =  nrccarray[2]
-            let nodeContext =  nrccarray[3]
+        for (var arr of followQueries){
+            for (var nrccarray of await arr){
+                let node: Node =  nrccarray[0]
+                let childRelation =  nrccarray[1]
+                let child: Node =  nrccarray[2]
+                let nodeContext =  nrccarray[3]
 
-            if (child.getValue().startsWith(nodeContext["searchstring"])){
-                let rest = child.getValue().slice(nodeContext["searchstring"].length)
-                nodeContext["searchstring"] = ""
-                nodeContext["leftoverstring"] = rest;
-                session.nodes.push(child)
-                session.context.push(nodeContext)
-            } else if (nodeContext["searchstring"].startsWith(child.getValue())){
-                nodeContext["searchstring"] = nodeContext["searchstring"].slice(child.getValue().length)
-                nodeContext["leftoverstring"] = "";
-                session.nodes.push(child)
-                session.context.push(nodeContext)
-            } 
+                if (child.getValue().startsWith(nodeContext["searchstring"])){
+                    let rest = child.getValue().slice(nodeContext["searchstring"].length)
+                    nodeContext["searchstring"] = ""
+                    nodeContext["leftoverstring"] = rest;
+                    session.nodes.push(child)
+                    session.context.push(nodeContext)
+                } else if (nodeContext["searchstring"].startsWith(child.getValue())){
+                    nodeContext["searchstring"] = nodeContext["searchstring"].slice(child.getValue().length)
+                    nodeContext["leftoverstring"] = "";
+                    session.nodes.push(child)
+                    session.context.push(nodeContext)
+                } 
+            }
         }
 
         if (session.nodes.length == 0){
@@ -116,6 +106,30 @@ export default class SearchStringQuery extends Query{
         
 
     }
+
+    async processNode(session, node, currentContext){
+        let followedChildren = new Array<any>();
+        if (this.saveCondition.check_condition(node, currentContext)){
+            let childRelations = await node.getChildRelations();
+            this.emitMember(node);
+            this.emitNode(node);
+            session["leafnodes"].push(node);
+            session["leafcontext"].push(currentContext);
+            if (childRelations.length == 0){
+                this.emit("leafnode", node);
+            }
+        }
+        for (var relation of await node.getChildRelations()){
+            for (var child of await relation.getChildren()){
+                if (this.followCondition.check_condition(node, relation, child, currentContext)){
+                    followedChildren.push([node, relation, child, currentContext])
+                }
+            }
+        }
+
+        return followedChildren;
+    }
+
+
+
 }
-
-

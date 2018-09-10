@@ -8,8 +8,8 @@ main();
 async function main() {
 
     var client = new TreeClient();
-    await client.addCollection('https://dexagod.github.io/collections/streetnames.jsonld');
-    let stringQuery = new SearchStringQuery("Gentse ");
+    await client.addCollection('https://dexagod.github.io/delijn/delijnstops.jsonld');
+    let stringQuery = new SearchStringQuery("Sint-D ");
     // stringQuery.on("member", function (member) {console.log(member)})
     let resultSession = await client.executeQuery(stringQuery)
     
@@ -17,7 +17,7 @@ async function main() {
 
     console.log("VERDER")
     
-    stringQuery = new SearchStringQuery("S");
+    stringQuery = new SearchStringQuery("eni");
     // stringQuery.on("member", function (member) {console.log(member)})
     resultSession = await client.executeQuery(stringQuery, resultSession)
     
@@ -28,7 +28,7 @@ async function main() {
 
     console.log("VERDER")
     
-    stringQuery = new SearchStringQuery("teen");
+    stringQuery = new SearchStringQuery("jsl");
     // stringQuery.on("member", function (member) {console.log(member)})
     resultSession = await client.executeQuery(stringQuery, resultSession)
     console.log(resultSession)

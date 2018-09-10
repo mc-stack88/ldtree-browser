@@ -15,11 +15,7 @@ export default abstract class Query extends EventEmitter{
     abstract async query(): Promise<Session>;
 
     async emitMember(node: Node){
-        console.log("")
-        console.log(node.members)
         let members = await node.getMembers();
-        console.log(node.members)
-        console.log(members)
         for (var member of members){
             if (Object.keys(member).length !== 0){
                 this.emit("member", member)
