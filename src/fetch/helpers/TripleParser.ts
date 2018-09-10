@@ -52,7 +52,7 @@ export default class TripleParser {
         }
     }
 
-    public parseNode(triples: Array<object>): Node {
+    public parseNode(triples: Array<object>, nodeId): Node {
         let obj = this.parseTriples(triples, ItemType.Node);
         obj = obj[Object.keys(obj)[0]];
 
@@ -63,7 +63,7 @@ export default class TripleParser {
         let totalItems = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#totalItems") ? Number(obj["http://www.w3.org/ns/hydra/core#totalItems"]) : NaN;
 
         try {
-            let result = new Node(value, childRelations, members, totalItems);
+            let result = new Node(nodeId, value, childRelations, members, totalItems);
             return result
         } catch(err) {
             throw err;

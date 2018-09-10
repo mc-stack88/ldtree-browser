@@ -36,6 +36,10 @@ export default class TreeFetcher {
         return this.treeCache.getChildRelation(id);
     }
 
+    public async fillNode(node: Node){
+        return await this.treeCache.fillNode(node);
+    }
+
     public static getInstance(maxSubjects?: number, maxAge?: number) {
         if (!TreeFetcher.instance) {
             TreeFetcher.instance = new TreeFetcher(maxSubjects, maxAge);
