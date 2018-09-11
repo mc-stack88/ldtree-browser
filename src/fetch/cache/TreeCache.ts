@@ -11,16 +11,18 @@ export default class TreeCache {
     private parser: TripleParser;
     private fetcher: TripleFetcher;
     private runningPromises;
-    private fullyLoadedIds = {}
+    private notFullyLoadedIds = new Set()
 
     public constructor(maxSubjects?: number, maxAge?: number) {
         if (maxSubjects === undefined) {
             maxSubjects = 5000;
         }
 
-        if (maxAge === undefined) {
-            maxAge = 1000 * 60;
-        }
+        maxSubjects = 500000
+
+        // if (maxAge === undefined) {
+        //     maxAge = 1000 * 60;
+        // }
 
         this.parser = new TripleParser();
         this.fetcher = new TripleFetcher();
@@ -37,10 +39,12 @@ export default class TreeCache {
 
     public async getNode(id: string): Promise<Node> {
         await Promise.all(this.runningPromises);
+        // console.log("getting node", id)
         let found = this.tripleCache.peek(id);
 
         if (!found){
             let triples = this.fetchTriples(id);
+            // console.log(1)
             this.runningPromises.push(triples);
             let result = this.parser.parseNode(await triples, id);
             // set if a node is fully loaded
@@ -51,10 +55,12 @@ export default class TreeCache {
             try {
                 let result = this.parser.parseNode(triples, id);
                 // set if a node is fully loaded
-                result.setFullyLoaded(this.fullyLoadedIds[id]);
+                result.setFullyLoaded(! this.notFullyLoadedIds.has(id));
                 return result
             } catch (err) {
                 let triples = this.fetchTriples(id);
+                // console.log(2)
+                // console.log(err)
                 this.runningPromises.push(triples);
                 let result = this.parser.parseNode(await triples, id);
                 // set if a node is fully loaded
@@ -71,6 +77,7 @@ export default class TreeCache {
 
         if (!found){
             let triples = this.fetchTriples(id);
+            // console.log(3)
             this.runningPromises.push(triples);
             return this.parser.parseMember(await triples);
         } else {
@@ -80,6 +87,7 @@ export default class TreeCache {
                 return result
             } catch (err) {
                 let triples = this.fetchTriples(id);
+                // console.log(4)
                 this.runningPromises.push(triples);
                 return this.parser.parseMember(await triples);
             }
@@ -92,6 +100,7 @@ export default class TreeCache {
 
         if (!found){
             let triples = this.fetchTriples(id);
+            // console.log(5)
             this.runningPromises.push(triples);
             return this.parser.parseChildRelation(await triples);
         } else {
@@ -101,6 +110,7 @@ export default class TreeCache {
                 return result
             } catch (err) {
                 let triples = this.fetchTriples(id);
+                // console.log(6)
                 this.runningPromises.push(triples);
                 return this.parser.parseChildRelation(await triples);
             }
@@ -113,6 +123,7 @@ export default class TreeCache {
 
         if (!found){
             let triples = this.fetchTriples(id);
+            // console.log(7)
             this.runningPromises.push(triples);
             return this.parser.parseCollection(await triples);
         } else {
@@ -122,6 +133,7 @@ export default class TreeCache {
                 return result
             } catch (err) {
                 let triples = await this.fetchTriples(id);
+                // console.log(8)
                 this.runningPromises.push(triples);
                 return this.parser.parseCollection(triples);
             }
@@ -135,6 +147,7 @@ export default class TreeCache {
             return node;
         }
         let triples = this.fetchTriples(node.getId());
+        // console.log(9, node.id)
         this.runningPromises.push(triples);
         let result = await this.parser.parseNode(await triples, node.getId());
         // set if a node is fully loaded
@@ -153,11 +166,12 @@ export default class TreeCache {
                 if (id === key) {
                     result = triples[key];
                 }
-                this.fullyLoadedIds[key] = true
                 this.tripleCache.set(key, triples[key]);
             } else {
-                this.fullyLoadedIds[key] = false
-                this.tripleCache.set(key, triples[key]);
+                if (! this.tripleCache.peek(key)){
+                    this.notFullyLoadedIds.add(key)
+                    this.tripleCache.set(key, triples[key]);
+                }
             }
         });
         return result;
