@@ -25,13 +25,18 @@ export default class SearchStringQuery extends Query{
     async query(): Promise<Session> {
         let toRemove = []
         for (var i = 0; i < this.session.nodes.length; i++){
+            // We look at every node in the session for a string match.
             if(this.session.context[i]["searchstring"] === undefined || this.session.context[i]["searchstring"] === null){
+                // We initialize a context for this query if it was nonexistent.
                 this.session.context[i]["searchstring"] = this.searchstring
                 this.session.context[i]["leftoverstring"] = "";
             } else {
+                // This session had already been queried and contains a context.
                 if (this.session.context[i]["leftoverstring"] === ""){
+                    // Last query matched the full node string.
                     this.session.context[i]["searchstring"] = this.searchstring
                 } else {
+                    // Last query did not match the full node string.
                     if (this.searchstring.startsWith(this.session.context[i]["leftoverstring"])){
                         this.session.context[i]["searchstring"] = this.searchstring.slice(this.session.context[i]["leftoverstring"].length);
                         this.session.context[i]["leftoverstring"] = ""
@@ -46,9 +51,10 @@ export default class SearchStringQuery extends Query{
             
             }
         }
+        // Remove indices reverse as to not distort the other indices that have to be deleted.
         for (var i = toRemove.length - 1; i >= 0 ; i--){
-            this.session.nodes = this.session.nodes.splice(i)
-            this.session.context = this.session.context.splice(i)
+            this.session.nodes.splice(toRemove[i], 1)
+            this.session.context.splice(toRemove[i], 1)
         }
         this.session["leafnodes"] = []
         this.session["leafcontext"] = []

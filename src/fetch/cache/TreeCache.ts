@@ -18,11 +18,9 @@ export default class TreeCache {
             maxSubjects = 5000;
         }
 
-        maxSubjects = 500000
-
-        // if (maxAge === undefined) {
-        //     maxAge = 1000 * 60;
-        // }
+        if (maxAge === undefined) {
+            maxAge = 1000 * 300; // 5 min
+        }
 
         this.parser = new TripleParser();
         this.fetcher = new TripleFetcher();
