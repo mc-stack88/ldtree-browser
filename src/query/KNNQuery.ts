@@ -1,5 +1,3 @@
-
-var Queue = require('tinyqueue');
 import SingleQuery from './SingleQuery';
 import Condition from '../condition/Condition';
 import Session from '../Session';
@@ -10,67 +8,139 @@ import StringContainedCondition from '../condition/StringContainedCondition';
 import StringContainsCondition from '../condition/StringContainsCondition';
 import LocationContainedCondition from "../condition/LocationContainedCondition";
 import LocationContainedSaveCondition from '../condition/LocationContainedSaveCondition';
-import SkipSaveCondition from '../condition/SkipSaveCondition';
 import KNNCondition from '../condition/KNNCondition';
+import StringContainsSaveCondition from '../condition/StringContainsSaveCondition';
+import * as terraformer from 'terraformer';
+import * as terraformerparser from 'terraformer-wkt-parser';
+import * as tinyqueue from '../tinyqueue/tinyqueue'
+import {Primitive} from "terraformer";
+import Query from './Query';
 
-export default class KNNQuery extends SingleQuery{
+export default class KNNQuery extends Query{
     followcondition: Condition;
-
+    point;
     long;
     lat;
-
-    constructor(long, lat, k = 3)
+    queue;
+    maxMinDist;
+    emittedNodes = [];
+    k;
+    constructor(lat, long, k = 3)
         {
-            super(new SkipSaveCondition(), new KNNCondition(long, lat));
+            super();
+            this.point = new terraformer.Point(long, lat);
+            this.k = k;
             this.long = long;
             this.lat = lat;
-            this.updateNodeContext({long: long, lat: lat, minChildDist: 9007199254740991, k: k, currentQueue : new Queue()})
+            this.maxMinDist = 0;
+            let queue = new tinyqueue([], function (a, b) {
+                return a.distance - b.distance;
+            });
+            
+            this.queue = queue;
+        }
+
+
+        query(): Promise<Session> {
+            return this.queryRecursive(this.session);
         }
 
         // This method returns an array of the form [ [node1, context1], [node2, context2], ... ]
+        
         async queryRecursive(session):Promise<any>{
     
             let followed_children = [];
             let saved_nodes = new Array<any>();
     
             for (var i = 0; i < session.nodes.length; i++){
-                let node = session.nodes[i]
-                let currentContext = session.context[i];
-                if (this.saveCondition.check_condition(node, currentContext)){
-                    this.emitMember(node);
-                    this.emitNode(node);
-                    let childRelations = await node.getChildRelations();
-                    if (childRelations.length == 0){
-                        saved_nodes.push([node, currentContext])
-                        this.emit("leafnode", node)
+                let node: Node = session.nodes[i]
+                try{
+                    let queueObj = this.getQueueObject(node);
+                    queueObj["distance"] = this.getDistance(queueObj);
+                    if (queueObj["distance"] > this.maxMinDist){
+                        this.maxMinDist = queueObj["distance"]
                     }
+                    this.queue.push(queueObj)
+                } catch (ex) {
+
                 }
-                let childRelations = await node.getChildRelations();
-                for (var relation of childRelations){
+            }
+
+            while (this.queue.length){
+                let leafNode = true;
+                let closestObj = this.queue.pop();
+                for (var relation of await closestObj.node.getChildRelations()){
                     for (var child of await relation.getChildren()){
-                        if (this.followCondition.check_condition(node, relation, child, currentContext)){
-                            followed_children.push([node, relation, child, currentContext])
+                        leafNode = false;
+                        try{
+                            let queueChild = this.getQueueObject(child);
+                            queueChild["distance"] = this.getDistance(queueChild);
+                            this.queue.push(queueChild);
+                        } catch(ex) {
+
                         }
                     }
                 }
-            }   
-    
-    
-            // for (var nrccarray of followed_children){
-            //     let newnodeContext = [nrccarray[3]]
-            //     if (this.nodeContextUpdateAction != null && [nrccarray[3]] != null){
-            //         newnodeContext = this.nodeContextUpdateAction(nrccarray[0], nrccarray[1], nrccarray[2], nrccarray[3]);
-            //     }
-            //     let finished_nodes = await this.queryRecursive([nrccarray[2]], [newnodeContext]);
-            //     saved_nodes = saved_nodes.concat(finished_nodes);
-            // }
-            // if (saved_nodes.length == 0){
-            //     // IDEA:: HERE WE PUBLISH THE MEMBERS IN THIS NODE
-            //     return [nodes, nodeContext];
-            // }
-            return saved_nodes
-    
+                // console.log("-----")
+                // for (var i = 0; i < this.queue.data.length; i++){
+                //     console.log(this.queue.data[i].distance)
+                // };
+                if (leafNode){
+                    // Leaf node
+                    this.emitNode(closestObj.node)
+                    this.emitMember(closestObj.node)
+                    this.emittedNodes.push(closestObj.node)
+                    if (this.emittedNodes.length >= this.k){
+                        return (new Session(this.emittedNodes))
+                    } 
+                }
+            }
+        
+            return new Session([]);
+        }
+
+
+        getQueueObject(node){
+            let nodepoly = terraformerparser.parse(node.getValue());
+            let nodeprimitivepoly = new terraformer.Primitive(nodepoly)
+            let entry = {}
+            entry["node"] = node;
+            entry["primitive"] = nodeprimitivepoly;
+            let e = nodeprimitivepoly.envelope();
+            entry["x"] = e.x
+            entry["y"] = e.y
+            entry["w"] = e.w
+            entry["h"] = e.h
+            return entry;
+        }
+
+        getDistance(queueObj){
+            if (queueObj["primitive"].contains(this.point)){
+                return 0;
+            } else {
+                return this.distancePointBox(this.long, this.lat, queueObj.x, queueObj.y, queueObj.x + queueObj.w, queueObj.y + queueObj.h)
+            }
+        }
+
+        // Credits: https://codereview.stackexchange.com/questions/175566/compute-shortest-distance-between-point-and-a-rectangle
+        distancePointBox(x, y, x_min, y_min, x_max, y_max) {
+            if (x < x_min) {
+                if (y <  y_min) return HYPOT(x_min-x, y_min-y);
+                if (y <= y_max) return x_min - x;
+                return HYPOT(x_min-x, y_max-y);
+            } else if (x <= x_max) {
+                if (y <  y_min) return y_min - y;
+                if (y <= y_max) return 0;
+                return y - y_max;
+            } else {
+                if (y <  y_min) return HYPOT(x_max-x, y_min-y);
+                if (y <= y_max) return x - x_max;
+                return HYPOT(x_max-x, y_max-y);
+            }
         }
     }
+
+function HYPOT(x, y) { return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2))}
     
     
+

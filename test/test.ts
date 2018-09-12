@@ -2,36 +2,19 @@ import TreeFetcher from "../src/fetch/TreeFetcher";
 import TreeClient from '../src/TreeClient';
 import SearchStringQuery from '../src/query/SearchStringQuery';
 import Node from "../src/tree/Node";
+import KNNQuery from '../src/query/KNNQuery';
 
 
 main();
 async function main() {
 
     var client = new TreeClient();
-    await client.addCollection('https://dexagod.github.io/delijn/delijnstops.jsonld');
-    let stringQuery = new SearchStringQuery("Sint-D ");
+    await client.addCollection('https://dexagod.github.io/delijn/stoplocations.jsonld');
+    let query = new KNNQuery(51.3, 3.42);
+    query.on("node", function(node){console.log(node)})
     // stringQuery.on("member", function (member) {console.log(member)})
-    let resultSession = await client.executeQuery(stringQuery)
+    let resultSession = await client.executeQuery(query)
     
-    console.log(resultSession)
-
-    console.log("VERDER")
-    
-    stringQuery = new SearchStringQuery("eni");
-    // stringQuery.on("member", function (member) {console.log(member)})
-    resultSession = await client.executeQuery(stringQuery, resultSession)
-    
-    // console.log("SESSION")
-    // console.log(resultSession)
-    
-    console.log(resultSession)
-
-    console.log("VERDER")
-    
-    stringQuery = new SearchStringQuery("jsl");
-    // stringQuery.on("member", function (member) {console.log(member)})
-    resultSession = await client.executeQuery(stringQuery, resultSession)
-    console.log(resultSession)
 
     
     // console.log("SESSION")
