@@ -11,6 +11,14 @@ export default class Node {
 
     fullyloaded: boolean;
 
+    /**
+     * Node constructor
+     * @param id 
+     * @param value 
+     * @param childRelations - Relations with the child.
+     * @param members - Data objects contained by the node.
+     * @param totalItems - Amount of nodes underneath this node in the tree.
+     */
     public constructor(id: string, value: any, childRelations: Array<string>, members: Array<string>, totalItems: number) {
         if (value === undefined) {
             throw "Invalid node";
@@ -32,6 +40,9 @@ export default class Node {
         return this.value;
     }
 
+    /** 
+     * Dependent on if the node was fully loaded, this can cause a fetch for a new page.
+    */
     public async getChildRelations(): Promise<Array<ChildRelation>> {
         let fetcher = TreeFetcher.getInstance();
         let result = [];
@@ -53,10 +64,9 @@ export default class Node {
         }        
     }
 
-    public setFullyLoaded(loaded: boolean){
-        this.fullyloaded = loaded;
-    }
-
+    /** 
+     * Dependent on if the node was fully loaded, this can cause a fetch for a new page.
+    */
     public async getMembers(): Promise<Array<Array<object>>> {
         let fetcher = TreeFetcher.getInstance();
         let result = [];
@@ -78,6 +88,9 @@ export default class Node {
         return result;
     }
 
+    /** 
+     * Returns total amount of nodes underneath this node in the tree.
+    */
     public async getTotalItems(): Promise<number> {
 
         if (this.totalItems === undefined || this.totalItems === null){
@@ -93,6 +106,10 @@ export default class Node {
         }
     }
 
+    /**
+     * Copies info from other node.
+     * @param node - other node
+     */
     public copyInfo(node){
         // id and value are already set.
         // The fullyloaded parameter is set in the calling method.
@@ -102,6 +119,17 @@ export default class Node {
         this.fullyloaded = node.fullyloaded 
     }
 
+    /**
+     * Sets the flag of the node being fully loaded (not provided in an other fragment as child without all data)
+     * @param loaded 
+     */
+    public setFullyLoaded(loaded: boolean){
+        this.fullyloaded = loaded;
+    }
+
+    /** 
+     * Checks node on being fully loaded
+    */
     public isFullyLoaded(){
         return this.fullyloaded;
     }

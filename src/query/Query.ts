@@ -8,12 +8,23 @@ export default abstract class Query extends EventEmitter{
 
     session: Session;
 
+    /**
+     * Sets the session object that is used throughout the query.
+     * @param session - 
+     */
     set_session(session: Session){
         this.session = session;
     }
 
+    /**
+     * This method is called to execute the query;
+     */
     abstract async query(): Promise<Session>;
 
+    /**
+     * All members of the passed node are emitted.
+     * @param node 
+     */
     async emitMember(node: Node){
         let members = await node.getMembers();
         for (var member of members){
@@ -22,6 +33,10 @@ export default abstract class Query extends EventEmitter{
             }
         }
     }  
+    /**
+     * The node itself is emitted.
+     * @param node 
+     */
     async emitNode(node){
         this.emit("node", node)
     }

@@ -3,7 +3,9 @@ import Node from "../../tree/Node";
 import ChildRelation from "../../tree/ChildRelation";
 import Collection from "../../tree/Collection";
 
-
+/** 
+ * This class handles the parsing of triple pattern fragments.
+*/
 export default class TripleParser {
 
     private singles;

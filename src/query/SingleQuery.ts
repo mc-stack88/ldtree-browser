@@ -2,31 +2,34 @@ import Condition from "../condition/Condition";
 import Query from './Query';
 import Session from '../Session';
 import Node from '../tree/Node';
-import SaveCondition from '../condition/SaveCondition';
+import EmitCondition from '../condition/EmitCondition';
 import FollowCondition from '../condition/FollowCondition';
 
+/** 
+ * Generic implementation of a query for search trees.
+*/
 export default abstract class SingleQuery extends Query{
-    saveCondition: Condition;
+    emitCondition: Condition;
     followCondition: Condition;
     nodeContext;
     nodeContextUpdateAction;
 
-    constructor(saveCondition: SaveCondition, followCondition: FollowCondition ){
+    /**
+     * 
+     * @param emitCondition - Condition to emit a node.
+     * @param followCondition - Condition to continue querying on the passed child.
+     */
+    constructor(emitCondition: EmitCondition, followCondition: FollowCondition ){
         super();
-        this.saveCondition = saveCondition;
+        this.emitCondition = emitCondition;
         this.followCondition = followCondition;
     }
 
-    // THIS IS AN OPTIONAL VALUE THAT CAN BE SET FOR EVERY QUERY CALL
-    updateNodeContext(nodeContext){
-        this.nodeContext = nodeContext;
-    }
-    // THIS IS AN OPTIONAL VALUE THAT CAN BE EXECUTED EVERY QUERY CALL ON THE ITERATION VALUE
-    updateNodeContextUpdateActionAction(action){
-        this.nodeContextUpdateAction = action;
-    }
-
+    /** 
+     * Overwritten base query method.
+    */
     async query(){
+        // Set the context of the nodes. These 
         if (this.session["context"] === undefined || this.session["context"] === null){
             if (this.nodeContext === undefined || this.nodeContext === null){
                 this.session["context"] = new Array(this.session.nodes.length);
@@ -57,7 +60,7 @@ export default abstract class SingleQuery extends Query{
         for (var i = 0; i < session.getLength(); i++){
             let node = session.nodes[i]
             let currentContext = session.context[i];
-            if (this.saveCondition.check_condition(node, currentContext)){
+            if (this.emitCondition.check_condition(node, currentContext)){
                 let childRelations = await node.getChildRelations();
                 this.emitMember(node);
                 this.emitNode(node);

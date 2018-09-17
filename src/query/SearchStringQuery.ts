@@ -5,20 +5,20 @@ import Node from '../tree/Node';
 import OrCondition from '../condition/OrCondition';
 import StringContainedCondition from '../condition/StringContainedCondition';
 import Query from './Query';
-import SaveCondition from '../condition/SaveCondition';
+import EmitCondition from '../condition/EmitCondition';
 import FollowCondition from '../condition/FollowCondition';
 import SearchCompletedCondition from '../condition/SearchCompletedCondition';
 import StringSearchContextUpdater from '../contextUpdater/StringSearchContextUpdater';
 
 export default class SearchStringQuery extends Query{
     searchstring: string;
-    saveCondition: SaveCondition;
+    emitCondition: EmitCondition;
     followCondition: FollowCondition;
 
     constructor(searchstring){
         super();
         this.searchstring = searchstring;
-        this.saveCondition = new SearchCompletedCondition();
+        this.emitCondition = new SearchCompletedCondition();
         this.followCondition = new OrCondition(new StringContainedCondition(), new StringContainsCondition());
     }
 
@@ -58,7 +58,6 @@ export default class SearchStringQuery extends Query{
         }
         this.session["leafnodes"] = []
         this.session["leafcontext"] = []
-        // this.session.updateNodeContext(new StringSearchContextUpdater(this.searchstring));
         let session = await this.queryRecursive(this.session);
         return session;
     
@@ -115,7 +114,7 @@ export default class SearchStringQuery extends Query{
 
     async processNode(session, node, currentContext){
         let followedChildren = new Array<any>();
-        if (this.saveCondition.check_condition(node, currentContext)){
+        if (this.emitCondition.check_condition(node, currentContext)){
             let childRelations = await node.getChildRelations();
             this.emitMember(node);
             this.emitNode(node);

@@ -2,11 +2,12 @@ import Condition from './Condition';
 import ChildRelation from '../tree/ChildRelation';
 import Node from '../tree/Node';
 import FollowCondition from './FollowCondition';
-import SaveCondition from './SaveCondition';
+import EmitCondition from './EmitCondition';
 
-export default class StringContainsSaveCondition implements SaveCondition {
+export default class StringContainedEmitCondition implements EmitCondition {
+    flag:string = "";
     check_condition(node:Node, nodeContext) {
-        if (nodeContext.startsWith(node.getValue())){
+        if (node.getValue().startsWith(nodeContext)){
             return true;
         } 
         return false; 

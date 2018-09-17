@@ -13,40 +13,49 @@ export default class TreeCache {
     private runningPromises;
     private notFullyLoadedIds = new Set()
 
+    /**
+     * Constructor of the TreeCache object.
+     * @param maxSubjects - Max amount of id's saved in the cache
+     * @param maxAge - Max age of items in the cache (ms)
+     */
     public constructor(maxSubjects?: number, maxAge?: number) {
         if (maxSubjects === undefined) {
-            maxSubjects = 5000;
+            maxSubjects = 10000;
         }
 
         if (maxAge === undefined) {
             maxAge = 1000 * 300; // 5 min
         }
 
+        // Initialize parser and fetcher
         this.parser = new TripleParser();
         this.fetcher = new TripleFetcher();
 
+        // Create the cache object.
         this.tripleCache = new LRU<string, Array<object>>({
             max: maxSubjects,
             maxAge: maxAge,
-            stale: true,
-            noDisposeOnSet: true,
         });
 
-        this.runningPromises = [];
+        // RunningPromises are the currently running fetches.
+        this.runningPromises = {};
     }
 
     public async getNode(id: string): Promise<Node> {
-        await Promise.all(this.runningPromises);
+        // await this.awaitPromises(id)
         // console.log("getting node", id)
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = this.fetchTriples(id);
-            // console.log(1)
-            this.runningPromises.push(triples);
+            this.runningPromises[id.split("#")[0]] = true
+            let triples = await this.fetchTriples(id);
+            delete this.runningPromises[id.split("#")[0]]
+            // this.runningPromises.push(triples);
             let result = this.parser.parseNode(await triples, id);
             // set if a node is fully loaded
-                result.setFullyLoaded(true);
+            result.setFullyLoaded(true);
+
+            delete this.runningPromises[id.split("#")[0]]
             return result;
         } else {
             let triples = this.tripleCache.get(id);
@@ -56,10 +65,10 @@ export default class TreeCache {
                 result.setFullyLoaded(! this.notFullyLoadedIds.has(id));
                 return result
             } catch (err) {
-                let triples = this.fetchTriples(id);
-                // console.log(2)
-                // console.log(err)
-                this.runningPromises.push(triples);
+                this.runningPromises[id.split("#")[0]] = true
+                let triples = await this.fetchTriples(id);
+                delete this.runningPromises[id.split("#")[0]]
+                // this.runningPromises.push(triples);
                 let result = this.parser.parseNode(await triples, id);
                 // set if a node is fully loaded
                 result.setFullyLoaded(true);
@@ -69,37 +78,41 @@ export default class TreeCache {
     }
 
     public async getMember(id: string): Promise<Array<object>> {
-
-        await Promise.all(this.runningPromises);
+        // await this.awaitPromises(id)
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = this.fetchTriples(id);
-            // console.log(3)
-            this.runningPromises.push(triples);
-            return this.parser.parseMember(await triples);
+            let triples = await this.checkRunningOrExecute(id)
+            // this.runningPromises[id.split("#")[0]] = true
+            // let triples = await this.fetchTriples(id);
+            // delete this.runningPromises[id.split("#")[0]]
+            // this.runningPromises.push(triples);
+            return this.parser.parseMember(triples);
         } else {
             let triples = this.tripleCache.get(id);
             try {
                 let result = this.parser.parseMember(triples);
                 return result
             } catch (err) {
-                let triples = this.fetchTriples(id);
-                // console.log(4)
-                this.runningPromises.push(triples);
+                // this.runningPromises[id.split("#")[0]] = true
+                // let triples = await this.fetchTriples(id);
+                // delete this.runningPromises[id.split("#")[0]]
+                // // this.runningPromises.push(triples);
+                let triples = await this.checkRunningOrExecute(id)
                 return this.parser.parseMember(await triples);
             }
         }
     }
 
     public async getChildRelation(id: string): Promise<ChildRelation> {
-        await Promise.all(this.runningPromises);
+        // await this.awaitPromises(id)
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = this.fetchTriples(id);
-            // console.log(5)
-            this.runningPromises.push(triples);
+            this.runningPromises[id.split("#")[0]] = true
+            let triples = await this.fetchTriples(id);
+            delete this.runningPromises[id.split("#")[0]]
+            // this.runningPromises.push(triples);
             return this.parser.parseChildRelation(await triples);
         } else {
             let triples = this.tripleCache.get(id);
@@ -107,22 +120,24 @@ export default class TreeCache {
                 let result = this.parser.parseChildRelation(triples);
                 return result
             } catch (err) {
-                let triples = this.fetchTriples(id);
-                // console.log(6)
-                this.runningPromises.push(triples);
+                this.runningPromises[id.split("#")[0]] = true
+                let triples = await this.fetchTriples(id);
+                delete this.runningPromises[id.split("#")[0]]
+                // this.runningPromises.push(triples);
                 return this.parser.parseChildRelation(await triples);
             }
         }
     }
 
     public async getCollection(id: string): Promise<Collection> {
-        await Promise.all(this.runningPromises);
+        // await this.awaitPromises(id)
         let found = this.tripleCache.peek(id);
 
         if (!found){
-            let triples = this.fetchTriples(id);
-            // console.log(7)
-            this.runningPromises.push(triples);
+            this.runningPromises[id.split("#")[0]] = true
+            let triples = await this.fetchTriples(id);
+            delete this.runningPromises[id.split("#")[0]]
+            // this.runningPromises.push(triples);
             return this.parser.parseCollection(await triples);
         } else {
             let triples = this.tripleCache.get(id);
@@ -130,23 +145,25 @@ export default class TreeCache {
                 let result = this.parser.parseCollection(triples);
                 return result
             } catch (err) {
+                this.runningPromises[id.split("#")[0]] = true
                 let triples = await this.fetchTriples(id);
-                // console.log(8)
-                this.runningPromises.push(triples);
+                delete this.runningPromises[id.split("#")[0]]
+                // this.runningPromises.push(triples);
                 return this.parser.parseCollection(triples);
             }
         }
     }
 
     public async fillNode(node: Node){
-        await Promise.all(this.runningPromises);
+        // await this.awaitPromises(node.id)
         // Check if state has changed after all runnning processes have finished
         if (node.fullyloaded === true){ 
             return node;
         }
+        this.runningPromises[node.id.split("#")[0]] = true
         let triples = this.fetchTriples(node.getId());
-        // console.log(9, node.id)
-        this.runningPromises.push(triples);
+        delete this.runningPromises[node.id.split("#")[0]]
+        // this.runningPromises.push(triples);
         let result = await this.parser.parseNode(await triples, node.getId());
         // set if a node is fully loaded
         result.setFullyLoaded(true);
@@ -154,10 +171,28 @@ export default class TreeCache {
         return node;
     }
 
+    runningQuerys = {}
+    private async checkRunningOrExecute(id){
+        let baseid = id.split("#")[0]
+        if (this.runningQuerys.hasOwnProperty(baseid)){
+            await this.runningQuerys[baseid];
+            return this.tripleCache.get(id);
+        } else {
+            let triples = this.fetchTriples(id);
+            this.runningQuerys[baseid] = triples;
+            let solvedtriples = await triples
+            // delete this.runningQuerys[baseid]
+            return solvedtriples;
+        }
+    }
+
     // Use flag to indicate nodes that are not from this fragment and may therefore be not completely loaded
     private async fetchTriples(id: string): Promise<Array<Object>> {
         let result = undefined;
         let triples = await this.fetcher.getTriplesBySubject(id);
+        if (triples === undefined || triples === null){
+            console.log("RIP IN RIPPERONIS")
+        }
         let keys = Object.keys(triples);
         keys.forEach((key) => {
             if (key.split("#")[0] === id.split("#")[0]) {
@@ -169,9 +204,13 @@ export default class TreeCache {
                 if (! this.tripleCache.peek(key)){
                     this.notFullyLoadedIds.add(key)
                     this.tripleCache.set(key, triples[key]);
+                } else {
+                    console.log(key, "already present")
                 }
             }
         });
         return result;
     }
+
+   
 }

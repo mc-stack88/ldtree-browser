@@ -14,12 +14,6 @@ export default class Session {
         }
     }
 
-    updateNodeContext(updater: ContextUpdater){
-        for (var i = 0; i < this.nodes.length; i++){
-            updater.updateContext(this.nodes[i], this.context[i])
-        }
-    }
-
     isEmpty(): boolean {
         return this.nodes.length == 0;
     }

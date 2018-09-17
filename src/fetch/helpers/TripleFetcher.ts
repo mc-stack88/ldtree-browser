@@ -1,6 +1,9 @@
 const ldfetch = require('ldfetch');
 import URL = require('url');
 
+/** 
+ * This class handles fetching the data and turning it into triples using the ldfetch package.
+*/
 export default class TripleFetcher {
 
     private fetch;
@@ -13,6 +16,10 @@ export default class TripleFetcher {
         }
     }
 
+    /**
+     * This method fetches the triples in the file (id), and bundles them by subject.
+     * @param id 
+     */
     public getTriplesBySubject(id: string): Array<object> {
         let parsed = URL.parse(id);
         let url = parsed.href.replace(parsed.hash, '').replace(parsed.search, '');

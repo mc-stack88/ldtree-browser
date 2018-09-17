@@ -7,9 +7,9 @@ import * as terraformerparser from 'terraformer-wkt-parser'
 import {Primitive} from "terraformer";
 import { GeoJsonObject, GeometryObject } from 'geojson';
 import FollowCondition from './FollowCondition';
-import SaveCondition from './SaveCondition';
+import EmitCondition from './EmitCondition';
 
-export default class LocationContainedSaveCondition implements SaveCondition {
+export default class LocationContainedEmitCondition implements EmitCondition {
 
     nodeprimitivepoly: Primitive<GeoJsonObject>;
     nodepoly: GeometryObject;

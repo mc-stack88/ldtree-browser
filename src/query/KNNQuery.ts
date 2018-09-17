@@ -7,9 +7,9 @@ import OrCondition from '../condition/OrCondition';
 import StringContainedCondition from '../condition/StringContainedCondition';
 import StringContainsCondition from '../condition/StringContainsCondition';
 import LocationContainedCondition from "../condition/LocationContainedCondition";
-import LocationContainedSaveCondition from '../condition/LocationContainedSaveCondition';
+import LocationContainedEmitCondition from '../condition/LocationContainedEmitCondition';
 import KNNCondition from '../condition/KNNCondition';
-import StringContainsSaveCondition from '../condition/StringContainsSaveCondition';
+import StringContainsEmitCondition from '../condition/StringContainsEmitCondition';
 import * as terraformer from 'terraformer';
 import * as terraformerparser from 'terraformer-wkt-parser';
 import * as tinyqueue from '../tinyqueue/tinyqueue'
@@ -81,10 +81,6 @@ export default class KNNQuery extends Query{
                         }
                     }
                 }
-                // console.log("-----")
-                // for (var i = 0; i < this.queue.data.length; i++){
-                //     console.log(this.queue.data[i].distance)
-                // };
                 if (leafNode){
                     // Leaf node
                     this.emitNode(closestObj.node)
