@@ -13,5 +13,6 @@ export default class TreeFetcher {
     getMember(id: string): Promise<object>;
     getCollection(id: string): Promise<Collection>;
     getChildRelation(id: string): Promise<ChildRelation>;
+    fillNode(node: Node): Promise<Node>;
     static getInstance(maxSubjects?: number, maxAge?: number): TreeFetcher;
 }

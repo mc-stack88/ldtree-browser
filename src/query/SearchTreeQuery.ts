@@ -8,7 +8,7 @@ import FollowCondition from '../condition/FollowCondition';
 /** 
  * Generic implementation of a query for search trees.
 */
-export default abstract class SingleQuery extends Query{
+export default abstract class SearchTreeQuery extends Query{
     emitCondition: Condition;
     followCondition: Condition;
     nodeContext;

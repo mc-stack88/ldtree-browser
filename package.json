@@ -1,6 +1,6 @@
 {
   "name": "ldtree-browser",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Navigation tool for rdf-trees using node.js",
   "main": "lib/index",
   "types": "lib/index",
@@ -25,10 +25,6 @@
     "@turf/turf": "^5.1.6",
     "@types/es6-promise": "^3.3.0",
     "@types/lru-cache": "^4.1.1",
-    "@types/n3": "^1.0.1",
-    "babel": "^6.23.0",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^8.0.2",
     "events": "^3.0.0",
     "ldfetch": "^1.0.9-alpha",
     "ldtree-parser": "^1.0.2",

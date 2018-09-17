@@ -26,6 +26,7 @@ export default class TreeCache {
         if (maxAge === undefined) {
             maxAge = 1000 * 300; // 5 min
         }
+        maxSubjects = 5000;
 
         // Initialize parser and fetcher
         this.parser = new TripleParser();
@@ -176,12 +177,16 @@ export default class TreeCache {
         let baseid = id.split("#")[0]
         if (this.runningQuerys.hasOwnProperty(baseid)){
             await this.runningQuerys[baseid];
-            return this.tripleCache.get(id);
+            let result = this.tripleCache.get(id);
+            if (result === null || result === undefined){
+               return this.checkRunningOrExecute(id);
+            } 
+            return result 
         } else {
             let triples = this.fetchTriples(id);
             this.runningQuerys[baseid] = triples;
             let solvedtriples = await triples
-            // delete this.runningQuerys[baseid]
+            delete this.runningQuerys[baseid]
             return solvedtriples;
         }
     }
@@ -191,7 +196,7 @@ export default class TreeCache {
         let result = undefined;
         let triples = await this.fetcher.getTriplesBySubject(id);
         if (triples === undefined || triples === null){
-            console.log("RIP IN RIPPERONIS")
+            throw "id " + id + " could not be parsed successfully";
         }
         let keys = Object.keys(triples);
         keys.forEach((key) => {

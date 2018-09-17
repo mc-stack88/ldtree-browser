@@ -1,4 +1,4 @@
-import SingleQuery from './SingleQuery';
+import SearchTreeQuery from './SearchTreeQuery';
 import Condition from '../condition/Condition';
 import Session from '../Session';
 import Node from '../tree/Node';
@@ -12,7 +12,7 @@ import KNNCondition from '../condition/KNNCondition';
 import StringContainsEmitCondition from '../condition/StringContainsEmitCondition';
 import * as terraformer from 'terraformer';
 import * as terraformerparser from 'terraformer-wkt-parser';
-import * as tinyqueue from '../tinyqueue/tinyqueue'
+import TinyQueue = require('../tinyqueue/tinyqueue')
 import {Primitive} from "terraformer";
 import Query from './Query';
 
@@ -33,7 +33,7 @@ export default class KNNQuery extends Query{
             this.long = long;
             this.lat = lat;
             this.maxMinDist = 0;
-            let queue = new tinyqueue([], function (a, b) {
+            let queue = new TinyQueue([], function (a, b) {
                 return a.distance - b.distance;
             });
             

@@ -1,6 +1,9 @@
 import Node from "./tree/Node";
 export default class Session {
     nodes: Array<Node>;
+    context: Array<Object>;
     constructor(nodes: Array<Node>);
-    is_empty(): boolean;
+    isEmpty(): boolean;
+    getLength(): number;
+    getNodes(): Array<Node>;
 }

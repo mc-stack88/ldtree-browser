@@ -1,4 +1,4 @@
-import SingleQuery from './SingleQuery';
+import SearchTreeQuery from './SearchTreeQuery';
 import Condition from '../condition/Condition';
 import Session from '../Session';
 import Node from '../tree/Node';
@@ -9,7 +9,7 @@ import StringContainsCondition from '../condition/StringContainsCondition';
 import LocationContainedCondition from "../condition/LocationContainedCondition";
 import LocationContainedEmitCondition from '../condition/LocationContainedEmitCondition';
 
-export default class LocationQuery extends SingleQuery{
+export default class LocationQuery extends SearchTreeQuery{
     followcondition: Condition;
 
     constructor(locationString: string)
