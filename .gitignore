@@ -80,8 +80,5 @@ typings/
 
 out/
 
-
-*.js
-.package-lock
-
 lib/
+

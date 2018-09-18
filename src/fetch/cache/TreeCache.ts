@@ -26,7 +26,6 @@ export default class TreeCache {
         if (maxAge === undefined) {
             maxAge = 1000 * 300; // 5 min
         }
-        maxSubjects = 5000;
 
         // Initialize parser and fetcher
         this.parser = new TripleParser();

@@ -17,7 +17,6 @@ import {Primitive} from "terraformer";
 import Query from './Query';
 
 export default class KNNQuery extends Query{
-    followcondition: Condition;
     point;
     long;
     lat;

@@ -8,7 +8,6 @@ import Query from './Query';
 import EmitCondition from '../condition/EmitCondition';
 import FollowCondition from '../condition/FollowCondition';
 import SearchCompletedCondition from '../condition/SearchCompletedCondition';
-import StringSearchContextUpdater from '../contextUpdater/StringSearchContextUpdater';
 
 export default class SearchStringQuery extends Query{
     searchstring: string;
@@ -67,16 +66,19 @@ export default class SearchStringQuery extends Query{
         
         let followQueries = [];
         let followedChildren = new Array<any>();
-        for (var i = 0; i < session.getLength(); i++){
+        // Process every node in the session.
+        for (var i = 0; i < session.size(); i++){
             let node = session.nodes[i];
             let currentContext = session.context[i];
             let children = this.processNode(session, node, currentContext)
             followQueries.push(children)
         }  
 
+        // Await all nodes untill they have been processed
         Promise.all(followQueries)
         session.nodes = []
         session.context = []
+        // Process all [node, childrel, child, nodeContext] pairs we received from the processNode function.
         for (var arr of followQueries){
             for (var nrccarray of await arr){
                 let node: Node =  nrccarray[0]
@@ -85,12 +87,16 @@ export default class SearchStringQuery extends Query{
                 let nodeContext =  nrccarray[3]
 
                 if (child.getValue().startsWith(nodeContext["searchstring"])){
+                    // The searchstring is a substring of this child.
+                    // We either have a complete or partial match with the rest of the substring and this child.
                     let rest = child.getValue().slice(nodeContext["searchstring"].length)
                     nodeContext["searchstring"] = ""
                     nodeContext["leftoverstring"] = rest;
                     session.nodes.push(child)
                     session.context.push(nodeContext)
                 } else if (nodeContext["searchstring"].startsWith(child.getValue())){
+                    // The child value is contained at the start of the rest of the substring.
+                    // We remove this child value from the search string and continue searching from this child.
                     nodeContext["searchstring"] = nodeContext["searchstring"].slice(child.getValue().length)
                     nodeContext["leftoverstring"] = "";
                     session.nodes.push(child)
@@ -100,6 +106,7 @@ export default class SearchStringQuery extends Query{
         }
 
         if (session.nodes.length == 0){
+            // Clean session object
             session.nodes = session["leafnodes"]
             session.context = session["leafcontext"]
             delete session["leafnodes"]
@@ -112,9 +119,11 @@ export default class SearchStringQuery extends Query{
 
     }
 
+    // This method 
     async processNode(session, node, currentContext){
         let followedChildren = new Array<any>();
         if (this.emitCondition.check_condition(node, currentContext)){
+            // This node can be emitted.
             let childRelations = await node.getChildRelations();
             this.emitMember(node);
             this.emitNode(node);
@@ -124,6 +133,7 @@ export default class SearchStringQuery extends Query{
                 this.emit("leafnode", node);
             }
         }
+        // Save all children that are fulfill the follow condition.
         for (var relation of await node.getChildRelations()){
             for (var child of await relation.getChildren()){
                 if (this.followCondition.check_condition(node, relation, child, currentContext)){

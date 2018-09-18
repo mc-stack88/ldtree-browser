@@ -29,7 +29,7 @@ export default abstract class SearchTreeQuery extends Query{
      * Overwritten base query method.
     */
     async query(){
-        // Set the context of the nodes. These 
+        // Set the context of the nodes.
         if (this.session["context"] === undefined || this.session["context"] === null){
             if (this.nodeContext === undefined || this.nodeContext === null){
                 this.session["context"] = new Array(this.session.nodes.length);
@@ -42,7 +42,7 @@ export default abstract class SearchTreeQuery extends Query{
         this.session["leafcontext"] = []
         this.session = await this.queryRecursive(this.session);
 
-        //TODO:: put the nodes in the nodelist on top of the starting nodes they originate from and return like this as new state for the session.
+        //TODO:: put the nodes in the nodelist on top of the starting nodes they originate from and return like this as new state for the session. -> not implemented.
         
         this.session.nodes = this.session["leafnodes"]
         this.session.context = this.session["leafcontext"]
@@ -57,7 +57,7 @@ export default abstract class SearchTreeQuery extends Query{
     async queryRecursive(session):Promise<any>{
 
         let followedChildren = new Array<any>();
-        for (var i = 0; i < session.getLength(); i++){
+        for (var i = 0; i < session.size(); i++){
             let node = session.nodes[i]
             let currentContext = session.context[i];
             if (this.emitCondition.check_condition(node, currentContext)){
@@ -65,6 +65,7 @@ export default abstract class SearchTreeQuery extends Query{
                 this.emitMember(node);
                 this.emitNode(node);
                 if (childRelations.length == 0){
+                    // We are in a leaf node.
                     session["leafnodes"].push(node)
                     session["leafcontext"].push(currentContext)
                     this.emit("leafnode", node)
