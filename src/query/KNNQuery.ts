@@ -1,15 +1,5 @@
-import SearchTreeQuery from './SearchTreeQuery';
-import Condition from '../condition/Condition';
 import Session from '../Session';
 import Node from '../tree/Node';
-import ChildRelation from '../tree/ChildRelation';
-import OrCondition from '../condition/OrCondition';
-import StringContainedCondition from '../condition/StringContainedCondition';
-import StringContainsCondition from '../condition/StringContainsCondition';
-import LocationContainedCondition from "../condition/LocationContainedCondition";
-import LocationContainedEmitCondition from '../condition/LocationContainedEmitCondition';
-import KNNCondition from '../condition/KNNCondition';
-import StringContainsEmitCondition from '../condition/StringContainsEmitCondition';
 import * as terraformer from 'terraformer';
 import * as terraformerparser from 'terraformer-wkt-parser';
 import TinyQueue = require('../tinyqueue/tinyqueue')
