@@ -29,10 +29,7 @@ export default abstract class Query extends EventEmitter{
         let members = await node.getMembers();
         for (var member of members){
             if (member === null || member === undefined){
-
-                console.log("THIS", member)
-                console.log(node)
-                console.log(members)
+                return;
             }
             if (Object.keys(member).length !== 0){
                 this.emit("member", member)

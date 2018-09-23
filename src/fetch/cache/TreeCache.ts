@@ -43,7 +43,6 @@ export default class TreeCache {
 
     public async getNode(id: string): Promise<Node> {
         // await this.awaitPromises(id)
-        // console.log("getting node", id)
         let found = this.tripleCache.peek(id);
 
         if (!found){
@@ -208,11 +207,12 @@ export default class TreeCache {
                 if (! this.tripleCache.peek(key)){
                     this.notFullyLoadedIds.add(key)
                     this.tripleCache.set(key, triples[key]);
-                } else {
-                    console.log(key, "already present")
                 }
             }
         });
+        if (result === undefined){
+            throw "id: " + id + " does not contain its own id."
+        }
         return result;
     }
 

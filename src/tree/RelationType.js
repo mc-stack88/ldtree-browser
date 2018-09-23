@@ -1,5 +1,5 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var RelationType;
 (function (RelationType) {
     RelationType["StringCompletesRelation"] = "https://w3id.org/tree#StringCompletesRelation";
@@ -11,5 +11,4 @@ var RelationType;
     RelationType["GeospatiallyContainsRelation"] = "https://w3id.org/tree#GeospatiallyContainsRelation";
     RelationType["InBetweenRelation"] = "https://w3id.org/tree#InBetweenRelation";
 })(RelationType || (RelationType = {}));
-exports.default = RelationType;
-//# sourceMappingURL=RelationType.js.map
+exports["default"] = RelationType;

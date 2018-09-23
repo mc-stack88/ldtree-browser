@@ -1,7 +1,6 @@
 import Condition from './Condition';
 import ChildRelation from '../tree/ChildRelation';
 import Node from '../tree/Node';
-import FollowCondition from './FollowCondition';
 import EmitCondition from './EmitCondition';
 
 export default class StringContainsEmitCondition implements EmitCondition {

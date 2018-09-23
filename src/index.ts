@@ -4,10 +4,10 @@ import SearchTreeQuery from './query/SearchTreeQuery';
 import LocationQuery from './query/LocationQuery';
 import SearchStringQuery from './query/SearchStringQuery';
 import KNNQuery from './query/KNNQuery';
-import OrCondition from '../lib/condition/OrCondition';
-import AndCondition from '../lib/condition/AndCondition';
-import EmitCondition from '../lib/condition/EmitCondition';
-import FollowCondition from '../lib/condition/FollowCondition';
+import OrCondition from './condition/AndCondition'
+import AndCondition from './condition/AndCondition';
+import EmitCondition from './condition/EmitCondition';
+import FollowCondition from './condition/FollowCondition';
 export {
     TreeClient,
     Query,
