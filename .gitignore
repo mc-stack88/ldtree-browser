@@ -82,3 +82,5 @@ out/
 
 lib/
 
+# Ignore compiled src files
+*.js

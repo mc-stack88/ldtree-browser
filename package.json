@@ -1,6 +1,6 @@
 {
   "name": "ldtree-browser",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Navigation tool for rdf-trees using node.js",
   "main": "lib/index.js",
   "types": "src/index.ts",
