@@ -1,3 +1,4 @@
+
 # ldtree-browser
 
 ldtree-browser is a library that helps you navigate and query linked data trees.
@@ -94,15 +95,18 @@ or in the module source code.
 ### Searchtree queries
 Queries for search trees can use the specific superclass SearchtreeQuery.
 This superclass incorporates all the logic needed to search the tree and emit the nodes, leafnodes and members.
-It passes a 
+Two conditions need to be passed to the super constructor.
 
+- emitcondition - This condition is used to check if a node and its members should be emitted or not.
+- followcondition  - This condition is used to know if the query should branch to a given childnode of the currently processed node.
 
-    class MyQuery extends treeBrowser.SearchTreeQuery{
-		constructor () { 
-			super(emitcondition, followcondition)
-		}
-	}  
- 
+```
+class MyQuery extends treeBrowser.SearchTreeQuery{
+	constructor () { 
+		super(emitcondition, followcondition)
+	}
+}  
+``` 
  
 ## Condition
 Conditions are used in the Searchtree Query to check the nodes and relations on a specific condition.
