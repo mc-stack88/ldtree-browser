@@ -3,6 +3,7 @@ import Query from './query/Query';
 import SearchTreeQuery from './query/SearchTreeQuery';
 import LocationQuery from './query/LocationQuery';
 import SearchStringQuery from './query/SearchStringQuery';
+import SearchStringBinaryTreeQuery from './query/SearchStringBinaryTreeQuery';
 import KNNQuery from './query/KNNQuery';
 import OrCondition from './condition/OrCondition'
 import AndCondition from './condition/AndCondition';

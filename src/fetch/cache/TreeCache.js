@@ -320,6 +320,9 @@ var TreeCache = /** @class */ (function () {
                                 }
                             }
                         });
+                        if (result === undefined) {
+                            throw "id: " + id + " does not contain its own id.";
+                        }
                         return [2 /*return*/, result];
                 }
             });

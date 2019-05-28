@@ -74,8 +74,6 @@ var TripleParser = /** @class */ (function () {
         }
     };
     TripleParser.prototype.parseCollection = function (triples) {
-        console.log("HERERREEE");
-        console.log(triples);
         var obj = this.parseTriples(triples, ItemType_1["default"].Collection);
         obj = obj[Object.keys(obj)[0]];
         var manages = obj.hasOwnProperty("http://www.w3.org/ns/hydra/core#manages") ? obj["http://www.w3.org/ns/hydra/core#manages"] : [];
